@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home.dart';
 
 void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('settings');
   runApp(
     MultiProvider(
       providers: [
@@ -36,7 +39,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.grey,
         brightness: Brightness.dark
       ),
-      themeMode: context.watch<LocalSettings>().forceDarkMode ? ThemeMode.dark : ThemeMode.system,
+      themeMode: (context.watch<LocalSettings>().appThemeMode == 0)
+                    ? ThemeMode.dark
+                    : (context.watch<LocalSettings>().appThemeMode == 1)
+                      ? ThemeMode.light
+                      : ThemeMode.system,
 
       //VERTALINGEN
       supportedLocales: const [
@@ -44,7 +51,6 @@ class MyApp extends StatelessWidget {
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
     );

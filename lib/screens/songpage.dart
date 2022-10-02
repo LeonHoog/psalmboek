@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
@@ -65,23 +66,39 @@ class _SongPageBodyList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ListView.builder(
-        itemCount: data["verzen"].length*2,
+        itemCount: data["verzen"].length,
         itemBuilder: (context, i) {
-          if (i.isEven)
-          { //laat versnummer zien
-            return Text(
-              "vers ${(i/2+1).toInt()}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            );
-          } else
-          { //laat tekst zien
-            return Text(
-              (data["verzen"][i~/2] + "\n"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18),
-            );
-          }
+          return InkWell(
+            onTap: () {},
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 5,),
+                  Text(
+                    "vers ${(i+1).toInt()}",
+                    style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble(), fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  context.watch<LocalSettings>().autoTextSize
+                      ? AutoSizeText(
+                        (data["verzen"][i] + "\n"),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
+                        maxLines: '\n'.allMatches(data["verzen"][i]).length+1,
+                        )
+                      : Text(
+                          (data["verzen"][i] + "\n"),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
+                        ),
+                  const SizedBox(height: 10,),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
