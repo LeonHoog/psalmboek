@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/screens/home.dart';
+import 'package:psalmboek/screens/home/home_wrapper.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Psalmboek',
-      home: const HomePage(),
+      home: const HomeScreensWrapper(),
 
       //APP THEMA
       theme: ThemeData(

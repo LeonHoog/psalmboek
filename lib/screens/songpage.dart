@@ -1,7 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
+import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class SongPageText extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -46,10 +46,7 @@ class _SongPageBodyTabs extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 30, 8, 0),
               children: [
                 Center(
-                  child: Text(
-                    data["verzen"][i],
-                    textAlign: TextAlign.center,
-                  ),
+                  child: SongText(data: data, verse: i),
                 ),
               ],
             ),
@@ -69,7 +66,11 @@ class _SongPageBodyList extends StatelessWidget {
         itemCount: data["verzen"].length,
         itemBuilder: (context, i) {
           return InkWell(
-            onTap: () {},
+            onLongPress: () {
+              if(!context.read<LocalSettings>().bookmarksList.contains("${data["nr"]}:${i+1}")){
+                context.read<LocalSettings>().addBookmarkToList("${data["nr"]}:${i+1}");
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
@@ -82,18 +83,7 @@ class _SongPageBodyList extends StatelessWidget {
                     style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble(), fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  context.watch<LocalSettings>().autoTextSize
-                      ? AutoSizeText(
-                        (data["verzen"][i] + "\n"),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
-                        maxLines: '\n'.allMatches(data["verzen"][i]).length+1,
-                        )
-                      : Text(
-                          (data["verzen"][i] + "\n"),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
-                        ),
+                  SongText(data: data, verse: i),
                   const SizedBox(height: 10,),
                 ],
               ),

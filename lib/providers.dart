@@ -21,14 +21,6 @@ class LocalSettings with ChangeNotifier {
     box.put('listView', value);
   }
 
-  bool _forceDarkMode = Hive.box('settings').get('forceDarkMode') ?? false;
-  bool get forceDarkMode => _forceDarkMode;
-  void setForceDarkMode(bool value) {
-    _forceDarkMode = value;
-    notifyListeners();
-    box.put('forceDarkMode', value);
-  }
-
   bool _autoTextSize = Hive.box('settings').get('autoTextSize') ?? true;
   bool get autoTextSize => _autoTextSize;
   void setAutoTextSize(bool value) {
@@ -51,5 +43,18 @@ class LocalSettings with ChangeNotifier {
     _appThemeMode = value;
     notifyListeners();
     box.put('appThemeMode', value);
+  }
+
+  List<String>_bookmarksList = ( Hive.box('settings').get('bookmarks')) ?? [];
+  List<String> get bookmarksList => _bookmarksList;
+  void addBookmarkToList(String value) {
+    _bookmarksList.add(value);
+    notifyListeners();
+    box.put('bookmarks', _bookmarksList);
+  }
+  void removeBookmarkFromList(String value) {
+    _bookmarksList.remove(value);
+    notifyListeners();
+    box.put('bookmarks', _bookmarksList);
   }
 }

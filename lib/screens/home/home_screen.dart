@@ -1,42 +1,14 @@
 import 'dart:convert';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import 'package:psalmboek/screens/settingspage.dart';
+import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
-import '../providers.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Psalmboek'),
-        actions:
-        [
-          IconButton(
-            onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsPage(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.settings),
-          ),
-        ],
-      ),
-      body: const _HomePage(),
-    );
-  }
-}
-
-class _HomePage extends StatelessWidget {
-  const _HomePage({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
