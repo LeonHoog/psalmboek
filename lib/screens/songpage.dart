@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
+import 'package:psalmboek/shared_widgets/SnackbarMessages.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class SongPageText extends StatelessWidget {
@@ -9,7 +10,6 @@ class SongPageText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool alreadyChecked = false;
     bool settingListView = context.read<LocalSettings>().listView;
 
     return DefaultTabController(
@@ -20,13 +20,6 @@ class SongPageText extends StatelessWidget {
           bottom: !settingListView ? TabBar(
             tabs: List<Tab>.generate(data["verzen"].length, (i) => Tab(child: Text((i+1).toString(), style: const TextStyle(color: Colors.grey),))),
           ) : null,
-          actions:
-          [
-            IconButton(
-              onPressed: () {},
-              icon: alreadyChecked ? const Icon(Icons.star) : const Icon(Icons.star_border),
-            ),
-          ],
         ),
         body: !settingListView ? _SongPageBodyTabs(data: data,) : _SongPageBodyList(data: data,)
       ),
@@ -70,6 +63,7 @@ class _SongPageBodyList extends StatelessWidget {
               if(!context.read<LocalSettings>().bookmarksList.contains("${data["nr"]}:${i+1}")){
                 context.read<LocalSettings>().addBookmarkToList("${data["nr"]}:${i+1}");
               }
+              snackBarBookmarkCreated(context);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
