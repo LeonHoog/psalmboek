@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:psalmboek/data/data_index.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int value = context.watch<Counter>().count;
+    int value = context.watch<LocalStates>().count;
+    int maxVerse = 150;
 
     return Center(
       child: Column(
@@ -30,10 +32,10 @@ class HomeScreen extends StatelessWidget {
                       : MediaQuery.of(context).size.width*.4,
                 ),
                 onChange: (double value) {
-                  context.read<Counter>().setCounter(value.round().toInt());
+                  context.read<LocalStates>().setCounter(value.round().toInt());
                 },
                 min: 1,
-                max: 150,
+                max: maxVerse.toDouble(),
                 initialValue: value.toDouble(),
                 innerWidget: (i){
                   return AnimatedFlipCounter(
@@ -50,10 +52,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        if(value > 1)
-                        {
-                          context.read<Counter>().setCounter(value - 1);
-                        }
+                        if (value > 1) context.read<LocalStates>().setCounter(value - 1);
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -63,10 +62,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(width: 20,),
                     ElevatedButton(
                       onPressed: () {
-                        if(value < 150)
-                        {
-                          context.read<Counter>().setCounter(value + 1);
-                        }
+                        if (value < maxVerse) context.read<LocalStates>().setCounter(value + 1);
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -80,9 +76,8 @@ class HomeScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final Map<String, dynamic> data = await rootBundle.loadString("lib/data/psalmboek1773.json").then((jsonStr) => jsonDecode(jsonStr));
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data["psalmen"][value - 1]),),
-              );
+              final Map<String, dynamic> data = await rootBundle.loadString(dataClassIndex[context.read<LocalStates>().dataVersionInput].jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[dataClassIndex[context.watch<LocalStates>().dataVersionInput].types[context.read<LocalStates>().dataVersionInputType]][value - 1]),),);
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),

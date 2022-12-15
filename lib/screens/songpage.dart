@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/shared_widgets/SnackbarMessages.dart';
+import 'package:psalmboek/shared_widgets/SnackBarMessages.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class SongPageText extends StatelessWidget {
@@ -10,7 +10,7 @@ class SongPageText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool settingListView = context.read<LocalSettings>().listView;
+    bool settingListView = context.read<SettingsData>().listView;
 
     return DefaultTabController(
       length: data["verzen"].length,
@@ -60,8 +60,8 @@ class _SongPageBodyList extends StatelessWidget {
         itemBuilder: (context, i) {
           return InkWell(
             onLongPress: () {
-              if(!context.read<LocalSettings>().bookmarksList.contains("${data["nr"]}:${i+1}")){
-                context.read<LocalSettings>().addBookmarkToList("${data["nr"]}:${i+1}");
+              if (!context.read<SettingsData>().bookmarksList.contains("${data["nr"]}:${i+1}")) {
+                context.read<SettingsData>().addBookmarkToList("${data["nr"]}:${i+1}");
               }
               snackBarBookmarkCreated(context);
             },
@@ -74,7 +74,7 @@ class _SongPageBodyList extends StatelessWidget {
                   const SizedBox(height: 5,),
                   Text(
                     "vers ${(i+1).toInt()}",
-                    style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble(), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   SongText(data: data, verse: i),

@@ -11,8 +11,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => Counter()),
-        ChangeNotifierProvider(create: (_) => LocalSettings()),
+        ChangeNotifierProvider(create: (_) => LocalStates()),
+        ChangeNotifierProvider(create: (_) => SettingsData()),
+        ChangeNotifierProvider(create: (_) => DatabaseContentProvider()),
       ],
       child: const MyApp(),
     ),
@@ -39,12 +40,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.grey,
         brightness: Brightness.dark
       ),
-      themeMode: (context.watch<LocalSettings>().appThemeMode == 0)
+      themeMode: (context.watch<SettingsData>().appThemeMode == 0)
                     ? ThemeMode.dark
-                    : (context.watch<LocalSettings>().appThemeMode == 1)
+                    : (context.watch<SettingsData>().appThemeMode == 1)
                       ? ThemeMode.light
                       : ThemeMode.system,
-
       //VERTALINGEN
       supportedLocales: const [
         Locale('nl',''),

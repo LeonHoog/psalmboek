@@ -1,16 +1,54 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:psalmboek/data/data_index.dart';
 
-class Counter with ChangeNotifier {
+class LocalStates with ChangeNotifier {
+  //VARIABLE NAMES:
+  //  count
+  //  dataVersionInput
+  //  dataVersionInputType
+
   int _count = 100;
   int get count => _count;
   void setCounter(value) {
     _count = value;
     notifyListeners();
   }
+
+  int _dataVersionInput = 0;
+  int get dataVersionInput => _dataVersionInput;
+  void setDataVersionInput(value) {
+    _dataVersionInput = value;
+    notifyListeners();
+  }
+
+  int _dataVersionInputType = 0;
+  int get dataVersionInputType => _dataVersionInputType;
+  void setDataVersionInputType(value) {
+    _dataVersionInputType = value;
+    notifyListeners();
+  }
 }
 
-class LocalSettings with ChangeNotifier {
+class DatabaseContentProvider with ChangeNotifier {
+  Map<String, dynamic>? _data;
+  Map<String, dynamic>? get data => _data;
+
+  getJson(context) async {
+    _data = await rootBundle.loadString(dataClassIndex[context.read<LocalStates>().dataVersionInput].jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+  }
+}
+
+class SettingsData with ChangeNotifier {
+  //VARIABLE NAMES:
+  //  listView
+  //  autoTextSize
+  //  textSize
+  //  appThemeMode
+  //  bookmarksList
+
   Box box = Hive.box('settings');
 
   bool _listView = Hive.box('settings').get('listView') ?? true;
@@ -45,7 +83,7 @@ class LocalSettings with ChangeNotifier {
     box.put('appThemeMode', value);
   }
 
-  List<String>_bookmarksList = ( Hive.box('settings').get('bookmarks')) ?? [];
+  final List<String> _bookmarksList = (Hive.box('settings').get('bookmarks')) ?? [];
   List<String> get bookmarksList => _bookmarksList;
   void addBookmarkToList(String value) {
     _bookmarksList.add(value);
@@ -54,7 +92,10 @@ class LocalSettings with ChangeNotifier {
   }
   void removeBookmarkFromList(String value) {
     _bookmarksList.remove(value);
-    notifyListeners();
     box.put('bookmarks', _bookmarksList);
+  }
+  void clearBookmarks() {
+    _bookmarksList.clear();
+    notifyListeners();
   }
 }
