@@ -9,12 +9,14 @@ import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final AsyncSnapshot<dynamic> snapshot;
+  const HomeScreen({Key? key, required this.snapshot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    int value = context.watch<LocalStates>().count;
-    int maxVerse = 150;
+    int maxVerse = snapshot.data[snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
+    int value = (context.watch<LocalStates>().count > maxVerse) ? maxVerse : context.watch<LocalStates>().count;
+
 
     return Center(
       child: Column(
@@ -37,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                 min: 1,
                 max: maxVerse.toDouble(),
                 initialValue: value.toDouble(),
-                innerWidget: (i){
+                innerWidget: (i) {
                   return AnimatedFlipCounter(
                     value: value,
                     fractionDigits: 0,

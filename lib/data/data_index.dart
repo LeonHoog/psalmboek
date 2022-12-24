@@ -1,3 +1,4 @@
+//TODO: REMOVE DEPENDENCY ON THIS CLASS; REPLACED BY "contents" INSIDE JSON FILE
 class DataClass {
   ///Name of JSON file.
   String jsonAsset;

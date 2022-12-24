@@ -46,16 +46,16 @@ class _HomeScreensWrapper extends StatelessWidget {
               context.read<LocalStates>().setDataVersionInputType(item[1]);
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-              const PopupMenuItem(
-                value: [0, 0],
-                child: Text('Psalmboek 1773'),
+              PopupMenuItem(
+                value: const [0, 0],
+                child: Text(snapshot.data["contents"][0]["title"]),
               ),
               PopupMenuItem(
                 value: const [0, 1],
                 child: Row(
-                  children: const [
-                    Icon(Icons.subdirectory_arrow_right, size: 15,),
-                    Text(' Enige Gezangen'),
+                  children: [
+                    const Icon(Icons.subdirectory_arrow_right, size: 15,),
+                    Text(" ${snapshot.data["contents"][1]["title"]}"),
                   ],
                 ),
               ),
@@ -64,7 +64,7 @@ class _HomeScreensWrapper extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(snapshot.data["title"]),
+                Text(snapshot.data["contents"][context.watch<LocalStates>().dataVersionInputType]["title"]),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),
@@ -91,7 +91,7 @@ class _HomeScreensWrapper extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            const HomeScreen(),
+            HomeScreen(snapshot: snapshot),
             BookmarksList(snapshot: snapshot),
           ],
         ),

@@ -1,5 +1,15 @@
 {
   "title" :  "Psalmboek 1773",
+  "contents" : [
+    {
+      "id" : "psalmen",
+      "title" : "Psalmboek 1773"
+    },
+    {
+      "id" : "gezangen",
+      "title" : "Enige Gezangen"
+    }
+  ],
   "psalmen": [
     {
       "nr": 1,
