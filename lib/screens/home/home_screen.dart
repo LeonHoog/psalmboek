@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:psalmboek/data/data_index.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
@@ -78,8 +77,8 @@ class HomeScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final Map<String, dynamic> data = await rootBundle.loadString(dataClassIndex[context.read<LocalStates>().dataVersionInput].jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[dataClassIndex[context.watch<LocalStates>().dataVersionInput].types[context.read<LocalStates>().dataVersionInputType]][value - 1]),),);
+              final Map<String, dynamic> data = await rootBundle.loadString(snapshot.data["contents"][context.watch<LocalStates>().dataVersionInput]["id"].jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[snapshot.data["contents"][context.watch<LocalStates>().dataVersionInput]["id"].types[context.read<LocalStates>().dataVersionInputType]][value - 1]),),);
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),

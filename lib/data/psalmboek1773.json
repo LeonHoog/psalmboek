@@ -2198,7 +2198,7 @@
   ],
   "gezangen": [
     {
-      "nr": "TG",
+      "nr": 1,
       "label": "Tien geboden des Heeren",
       "verzen": [
         "Mijn ziel, herdenk met heilig beven,\nHoe God, met majesteit bekleed,\nZijn wet op Horeb heeft gegeven,\nWaar Hij deez' woorden horen deed:",
@@ -2213,7 +2213,7 @@
       ]
     },
     {
-      "nr": "LvM",
+      "nr": 2,
       "label": "Lofzang van Maria",
       "verzen": [
         "Mijn ziel verheft Gods eer;\nMijn geest mag blij den HEER\nMijn Zaligmaker noemen,\nDie, in haar lagen staat,\nZijn dienstmaagd niet versmaadt,\nMaar van Zijn gunst doet roemen.",
@@ -2226,7 +2226,7 @@
       ]
     },
     {
-      "nr": "LvZ",
+      "nr": 3,
       "label": "Lofzang van Zacharias",
       "verzen": [
         "Lof zij den God van Israël,\nDen HEER, die aan Zijn erfvolk dacht,\nEn, door Zijn liefderijk bestel,\nVerlossing heeft teweeg gebracht;\nEen hoorn des heils heeft opgerecht;\n't Geen Davids huis was toegezegd,\nDat wil Hij ons nu schenken;\nGelijk Gods trouw, van 's aardrijks ochtendstond,\nDoor der profeten wijzen mond,\nZich hiertoe aan de vaderen verbond.",
@@ -2237,7 +2237,7 @@
       ]
     },
     {
-      "nr": "LvS",
+      "nr": 4,
       "label": "Lofzang van Simeon",
       "verzen": [
         "Zo laat Gij, HEER, Uw knecht,\nNaar 't woord, hem toegezegd,\nThans henengaan in vrede;\nNu hij Uw zaligheid,\nZo lang door hem verbeid,\nGezien heeft op zijn bede.",
@@ -2245,7 +2245,7 @@
       ]
     },
     {
-      "nr": "GdH",
+      "nr": 5,
       "label": "Gebed des Heeren",
       "verzen": [
         "O allerhoogste Majesteit,\nDie in het rijk der heerlijkheid\nDe heem'len hebt tot Uwen troon,\nWij roepen U, in Uwen Zoon,\nDie voor ons heeft genoeg gedaan,\nAls onzen Vader need'rig aan.",
@@ -2261,7 +2261,7 @@
       ]
     },
     {
-      "nr": "TA",
+      "nr": 6,
       "label": "Twaalf artikelen des geloofs",
       "verzen": [
         "'k Geloof in God, den Vader, die 't heelal\nGeschapen heeft, en houdt in wezen;\nEn dat Hij, om Zijns Zoons wil, zal\nMijn Vader zijn, mijn smart genezen,\nMij schenken al het nodig goed,\nEn 't kwaad, dat mij op aard' ontmoet,\nGenadig doen ten beste keren;\nZijn almacht zal mij steeds behoên.\nDat wou Hij, als mijn Bondsgod, zweren;\nDit wil Hij als mijn Vader, doen.",
@@ -2271,14 +2271,14 @@
       ]
     },
     {
-      "nr": "BvP",
+      "nr": 7,
       "label": "Bedezang voor de predikatie",
       "verzen": [
         "O God, die onze Vader zijt;\nDie t' allen tijd,\nOns Uwe tegenwoordigheid,\nIn Christus, wilt betonen,\nWanneer men, in Uw naam vergaard,\nUw Woord verklaart;\nZie ons nu saâm daartoe bereid;\nUw Geest koom' bij ons wonen;\nOntsluit des dienaars hart en mond;\nWil hem en ons verlichten,\nOpdat hij, uit Uw heilverbond,\nZichzelf en ons moog' stichten,\nEn wij, op Uwe leer gegrond,\nOns leven daarnaar richten."
       ]
     },
     {
-      "nr": "MZ",
+      "nr": 8,
       "label": "Morgenzang",
       "verzen": [
         "Wij danken U, barmhartig God,\nBeschikker van ons deel en lot,\nVoor Uwe hoed' en trouwe wacht,\nOns weer betoond in dezen nacht.",
@@ -2291,7 +2291,7 @@
       ]
     },
     {
-      "nr": "AZ",
+      "nr": 9,
       "label": "Avondzang",
       "verzen": [
         "O grote Christus, eeuwig licht!\nNiets is bedekt voor Uw gezicht;\nDie ons bestraalt, waar wij ook gaan,\nAl schijnt geen zon, al licht geen maan.",
@@ -2304,7 +2304,7 @@
       ]
     },
     {
-      "nr": "EgD",
+      "nr": 10,
       "label": "Eigen geschrift Davids",
       "verzen": [
         "Ik was een jongeling, nog teder en gering,\nbij broed'ren laag geacht.\nMen had mij in het veld\ntot herder aangesteld;\ndaar hield ik steeds de wacht\nen weidde 't wollig vee.\nToen maakt' ik, wel te vreê,\neen harp met eigen handen.\nIk greep het snarentuig,\n'k zong psalmen; van 't gejuich\nweergalmden onze landen.",

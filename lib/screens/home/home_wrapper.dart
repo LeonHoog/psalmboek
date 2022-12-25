@@ -3,7 +3,6 @@ import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:psalmboek/data/data_index.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/bookmarks_list.dart';
 import 'package:psalmboek/screens/home/home_screen.dart';
@@ -17,9 +16,10 @@ class HomeScreensWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: rootBundle.loadString(dataClassIndex[context.read<LocalStates>().dataVersionInput].jsonAsset).then((jsonStr) => jsonDecode(jsonStr)),
+      future: rootBundle.loadString("lib/data/psalmboek1773.json").then((jsonStr) => jsonDecode(jsonStr)),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          context.read<SettingsData>().getJsonBookmarks();
           return _HomeScreensWrapper(snapshot: snapshot);
         } else {
           return const _HomeScreensWrapperPlaceholder();

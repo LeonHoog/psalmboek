@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/shared_widgets/SnackBarMessages.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
@@ -60,8 +61,9 @@ class _SongPageBodyList extends StatelessWidget {
         itemBuilder: (context, i) {
           return InkWell(
             onLongPress: () {
-              if (!context.read<SettingsData>().bookmarksList.contains("${data["nr"]}:${i+1}")) {
-                context.read<SettingsData>().addBookmarkToList("${data["nr"]}:${i+1}");
+              BookmarksClass bookmark = BookmarksClass(jsonAsset: "lib/data/psalmboek1773.json", contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
+              if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
+                context.read<SettingsData>().addBookmarkToList(BookmarksClass(jsonAsset: "lib/data/psalmboek1773.json", contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1));
               }
               snackBarBookmarkCreated(context);
             },

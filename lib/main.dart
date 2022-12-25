@@ -13,7 +13,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LocalStates()),
         ChangeNotifierProvider(create: (_) => SettingsData()),
-        ChangeNotifierProvider(create: (_) => DatabaseContentProvider()),
+        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.json")),
       ],
       child: const MyApp(),
     ),
