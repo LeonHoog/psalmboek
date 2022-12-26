@@ -61,9 +61,9 @@ class _SongPageBodyList extends StatelessWidget {
         itemBuilder: (context, i) {
           return InkWell(
             onLongPress: () {
-              BookmarksClass bookmark = BookmarksClass(jsonAsset: "lib/data/psalmboek1773.json", contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
+              BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().jsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
               if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
-                context.read<SettingsData>().addBookmarkToList(BookmarksClass(jsonAsset: "lib/data/psalmboek1773.json", contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1));
+                context.read<SettingsData>().addBookmarkToList(BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().jsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1));
               }
               snackBarBookmarkCreated(context);
             },

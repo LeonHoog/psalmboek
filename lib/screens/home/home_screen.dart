@@ -77,9 +77,9 @@ class HomeScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final Map<String, dynamic> data = await rootBundle.loadString(snapshot.data["contents"][context.watch<LocalStates>().dataVersionInput]["id"].jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[snapshot.data["contents"][context.watch<LocalStates>().dataVersionInput]["id"].types[context.read<LocalStates>().dataVersionInputType]][value - 1]),),);
-            },
+              final Map<String, dynamic> data = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1]),),);
+              },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Icon(Icons.menu_book, size: 30,),

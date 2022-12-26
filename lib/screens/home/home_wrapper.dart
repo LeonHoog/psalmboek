@@ -16,7 +16,7 @@ class HomeScreensWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: rootBundle.loadString("lib/data/psalmboek1773.json").then((jsonStr) => jsonDecode(jsonStr)),
+      future: rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr)),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           context.read<SettingsData>().getJsonBookmarks();
