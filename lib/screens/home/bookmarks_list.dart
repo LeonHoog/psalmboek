@@ -27,12 +27,12 @@ class BookmarksList extends StatelessWidget {
               key: ValueKey(index),
               endActionPane: ActionPane(
                 motion: const ScrollMotion(),
-                dismissible: DismissiblePane(
+               /* dismissible: DismissiblePane(
                   onDismissed: () {
                     //TODO: PROBLEMATISCH
                     // context.read<SettingsData>().removeBookmarkFromList(data[index]);
                   },
-                ),
+                ),*/
                 children: [
                   const Flexible(
                     flex: 1,
@@ -44,7 +44,7 @@ class BookmarksList extends StatelessWidget {
                     flex: 10,
                     onPressed: (BuildContext context) async {
                       final Map<String, dynamic> songData = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot,),),);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),);
                     },
                     backgroundColor: const Color(0xFF21B7CA),
                     foregroundColor: Colors.white,
