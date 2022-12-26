@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/shared_widgets/SnackbarMessages.dart';
+import 'package:psalmboek/shared_widgets/SnackBarMessages.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class SongPageText extends StatelessWidget {
   final Map<String, dynamic> data;
-  const SongPageText({Key? key, required this.data}) : super(key: key);
+  final AsyncSnapshot<dynamic> snapshot;
+  final String? reference;
+  const SongPageText({Key? key, required this.data, required this.snapshot, this.reference}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool settingListView = context.read<LocalSettings>().listView;
+    bool settingListView = context.read<SettingsData>().listView;
 
     return DefaultTabController(
       length: data["verzen"].length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(data["nr"].toString()),
+          title: Text((reference ?? snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"]) +" " + data["nr"].toString()),
           bottom: !settingListView ? TabBar(
             tabs: List<Tab>.generate(data["verzen"].length, (i) => Tab(child: Text((i+1).toString(), style: const TextStyle(color: Colors.grey),))),
           ) : null,
@@ -60,8 +63,9 @@ class _SongPageBodyList extends StatelessWidget {
         itemBuilder: (context, i) {
           return InkWell(
             onLongPress: () {
-              if(!context.read<LocalSettings>().bookmarksList.contains("${data["nr"]}:${i+1}")){
-                context.read<LocalSettings>().addBookmarkToList("${data["nr"]}:${i+1}");
+              BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().jsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
+              if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
+                context.read<SettingsData>().addBookmarkToList(BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().jsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1));
               }
               snackBarBookmarkCreated(context);
             },
@@ -74,7 +78,7 @@ class _SongPageBodyList extends StatelessWidget {
                   const SizedBox(height: 5,),
                   Text(
                     "vers ${(i+1).toInt()}",
-                    style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble(), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   SongText(data: data, verse: i),

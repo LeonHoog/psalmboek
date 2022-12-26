@@ -10,17 +10,18 @@ class SongText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return context.watch<LocalSettings>().autoTextSize
+    String content = (data["verzen"][verse] + "\n");
+    return context.watch<SettingsData>().autoTextSize
         ? AutoSizeText(
-            (data["verzen"][verse] + "\n"),
+            content,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
+            style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble()),
             maxLines: '\n'.allMatches(data["verzen"][verse]).length+1,
         )
         : Text(
-            (data["verzen"][verse] + "\n"),
+            content,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: context.read<LocalSettings>().textSize.toDouble()),
+            style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble()),
         );
   }
 }
