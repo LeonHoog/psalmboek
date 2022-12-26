@@ -3,7 +3,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/screens/songpage.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class BookmarksList extends StatelessWidget {
@@ -105,7 +104,7 @@ class _BookmarkCard extends StatelessWidget {
           children: [
             const SizedBox(height: 4,),
             Text(
-              /*"Psalm*/ "${data.index! + 1}: ${data.verse}",
+              "${snapshot.data["contents"][data.contentType]["reference"]} ${data.index! + 1}: ${data.verse}",
               style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),

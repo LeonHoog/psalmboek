@@ -3,11 +3,13 @@
   "contents" : [
     {
       "id" : "psalmen",
-      "title" : "Psalmboek 1773"
+      "title" : "Psalmboek 1773",
+      "reference" : "Psalm"
     },
     {
       "id" : "gezangen",
-      "title" : "Enige Gezangen"
+      "title" : "Enige Gezangen",
+      "reference" : "Gezang"
     }
   ],
   "psalmen": [

@@ -7,7 +7,8 @@ import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class SongPageText extends StatelessWidget {
   final Map<String, dynamic> data;
-  const SongPageText({Key? key, required this.data}) : super(key: key);
+  final AsyncSnapshot<dynamic> snapshot;
+  const SongPageText({Key? key, required this.data, required this.snapshot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class SongPageText extends StatelessWidget {
       length: data["verzen"].length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(data["nr"].toString()),
+          title: Text(snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"] +" " + data["nr"].toString()),
           bottom: !settingListView ? TabBar(
             tabs: List<Tab>.generate(data["verzen"].length, (i) => Tab(child: Text((i+1).toString(), style: const TextStyle(color: Colors.grey),))),
           ) : null,
