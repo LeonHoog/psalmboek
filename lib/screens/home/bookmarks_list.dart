@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
+import 'package:psalmboek/screens/songpage.dart';
 import 'package:psalmboek/shared_widgets/songtext.dart';
 
 class BookmarksList extends StatelessWidget {
@@ -40,13 +43,14 @@ class BookmarksList extends StatelessWidget {
                   SlidableAction(
                     flex: 10,
                     onPressed: (BuildContext context) async {
-                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: snapshot.data[snapshot.data[data[index].contentType][1]["id"]][int.parse(data[index].index.toString())])),);
+                      final Map<String, dynamic> songData = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot,),),);
                     },
                     backgroundColor: const Color(0xFF21B7CA),
                     foregroundColor: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     icon: Icons.menu_book,
-                    label: "Psalm",
+                    label: "Meer",
                   ),
                   const Flexible(
                     flex: 1,
