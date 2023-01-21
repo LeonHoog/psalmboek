@@ -46,8 +46,8 @@ class BookmarksList extends StatelessWidget {
                       final Map<String, dynamic> songData = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),);
                     },
-                    backgroundColor: const Color(0xFF21B7CA),
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
+                    foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
                     borderRadius: BorderRadius.circular(12),
                     icon: Icons.menu_book,
                     label: "Meer",
@@ -64,8 +64,8 @@ class BookmarksList extends StatelessWidget {
                     {
                       context.read<SettingsData>().removeBookmarkFromList(data[index]);
                     },
-                    backgroundColor: const Color(0xFFFE4A49),
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.watch<LocalStates>().colorScheme!.secondary,
+                    foregroundColor: context.watch<LocalStates>().colorScheme!.onSecondary,
                     borderRadius: BorderRadius.circular(12),
                     icon: Icons.delete,
                     label: 'Wis',
@@ -101,6 +101,8 @@ class _BookmarkCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Card(
+        color: context.watch<LocalStates>().colorScheme!.surface,
+        elevation: 2,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

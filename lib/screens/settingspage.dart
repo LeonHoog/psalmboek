@@ -9,7 +9,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.watch<LocalStates>().colorScheme!.background,
       appBar: AppBar(
+        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         title: const Text('instellingen'),
       ),
       body: ListView(
@@ -27,13 +29,6 @@ class SettingsPage extends StatelessWidget {
                   title: const Text('Selecteer grootte'),
                   children: <Widget>[
                     const Divider(),
-                    SimpleDialogOption(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.read<SettingsData>().setTextSize(12);
-                      },
-                      child: const Text('extra klein', style: TextStyle(fontSize: 12),),
-                    ),
                     SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context);
@@ -79,8 +74,11 @@ class SettingsPage extends StatelessWidget {
           ),
           SwitchListTile(
             title: const Text('dynamische tekstgrootte'),
+            activeColor: context.watch<LocalStates>().colorScheme!.primary,
+            inactiveTrackColor: context.watch<LocalStates>().colorScheme!.shadow,
+            inactiveThumbColor: context.watch<LocalStates>().colorScheme!.inversePrimary,
             value: context.watch<SettingsData>().autoTextSize,
-            onChanged: (value){
+            onChanged: (value) {
               context.read<SettingsData>().setAutoTextSize(value);
             },
           ),
@@ -102,6 +100,7 @@ class SettingsPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(0);
+                        context.read<LocalStates>().notifyLocalStatesListeners();
                         },
                       child: const Text('donker'),
                     ),
@@ -109,28 +108,24 @@ class SettingsPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(1);
+                        context.read<LocalStates>().notifyLocalStatesListeners();
                       },
                       child: const Text('licht'),
                     ),
-                    SimpleDialogOption(
+                   //TODO: OPTIE TERUG
+                   /* SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(2);
+                        context.read<LocalStates>().notifyLocalStatesListeners();
                       },
                       child: const Text('systeem'),
-                    ),
+                    ),*/
                   ],
                 );
               }
                   );
               },
-          ),
-          SwitchListTile(
-            title: const Text('lijstweergave'),
-            value: context.watch<SettingsData>().listView,
-            onChanged: (value){
-              context.read<SettingsData>().setListView(value);
-            },
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),

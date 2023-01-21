@@ -1,4 +1,4 @@
-package com.example.psalmboek
+package com.leonhoog.psalmboek
 
 import io.flutter.embedding.android.FlutterActivity
 
