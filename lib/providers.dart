@@ -87,6 +87,10 @@ class SettingsData with ChangeNotifier {
     box.put('textSize', value);
   }
 
+  //appThemeMode
+  //  0: dark
+  //  1: light
+  //  2: system
   int _appThemeMode = Hive.box('settings').get('appThemeMode') ?? 0;
   int get appThemeMode => _appThemeMode;
   void setAppThemeMode(int value) {

@@ -112,15 +112,14 @@ class SettingsPage extends StatelessWidget {
                       },
                       child: const Text('licht'),
                     ),
-                   //TODO: OPTIE TERUG
-                   /* SimpleDialogOption(
+                    SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(2);
                         context.read<LocalStates>().notifyLocalStatesListeners();
                       },
                       child: const Text('systeem'),
-                    ),*/
+                    ),
                   ],
                 );
               }

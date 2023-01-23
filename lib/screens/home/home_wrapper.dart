@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/bookmarks_list.dart';
@@ -38,7 +39,7 @@ class _HomeScreensWrapper extends StatefulWidget {
   State<_HomeScreensWrapper> createState() => _HomeScreensWrapperState();
 }
 
-class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerProviderStateMixin {
+class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerProviderStateMixin, WidgetsBindingObserver {
   late TabController tabController;
 
   void updateTabIndex() {
@@ -55,6 +56,14 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
       vsync: this,
     );
     tabController.addListener(updateTabIndex);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    //TODO: BETTER IMPLEMENTATION
+    if (context.watch<SettingsData>().appThemeMode == 2)
+      Phoenix.rebirth(context);
   }
 
   @override
@@ -65,11 +74,15 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
         backgroundColor: context.watch<LocalStates>().colorScheme!.background,
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         floatingActionButton: (tabController.index == 0) ? FloatingActionButton.extended(
-          onPressed: () async {
+          onPressed: () {
             int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
             int value = (context.read<CounterStates>().count > maxVerse) ? maxVerse : context.read<CounterStates>().count;
-            final Map<String, dynamic> data = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1], snapshot: widget.snapshot,),),);
+
+            Future<Map<String, dynamic>> getData() async {
+              return await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+            }
+
+            getData().then((data) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1], snapshot: widget.snapshot,),),));
           },
           label: Icon(Icons.menu_book, color: context.watch<LocalStates>().colorScheme!.onTertiary,),
           tooltip: "openen",
@@ -143,6 +156,7 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
   @override
   void dispose() {
     tabController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
@@ -151,7 +165,7 @@ class _FABLocation extends FloatingActionButtonLocation {
   final BuildContext context;
   final double y;
 
-  const _FABLocation({Key? key, required this.context, required this.y});
+  const _FABLocation({required this.context, required this.y});
 
   @override
   Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {

@@ -42,9 +42,11 @@ class BookmarksList extends StatelessWidget {
                   ),
                   SlidableAction(
                     flex: 10,
-                    onPressed: (BuildContext context) async {
-                      final Map<String, dynamic> songData = await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),);
+                    onPressed: (BuildContext context) {
+                      Future<Map<String, dynamic>> getData() async {
+                        return await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
+                      }
+                      getData().then((songData) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),));
                     },
                     backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
                     foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
