@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
-import 'package:psalmboek/shared_widgets/songtext.dart';
+import 'package:psalmboek/shared_code/songtext.dart';
 
 class BookmarksList extends StatelessWidget {
   final AsyncSnapshot<dynamic> snapshot;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/shared_widgets/SnackBarMessages.dart';
-import 'package:psalmboek/shared_widgets/songtext.dart';
+import 'package:psalmboek/shared_code/snackbar_messages.dart';
+import 'package:psalmboek/shared_code/songtext.dart';
 
 class SongPageText extends StatelessWidget {
   final Map<String, dynamic> data;

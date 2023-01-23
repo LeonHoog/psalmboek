@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/home_wrapper.dart';
+import 'shared_code/create_material_color.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
         //GET COLOR SCHEME
         ColorScheme lightColorScheme;
         ColorScheme darkColorScheme;
-        const defaultColor = Color(0xFF1E88E5);
+        const defaultColor = Color(0xFF6B008D);
 
         if (lightDynamic != null && darkDynamic != null) {
           // On Android S+ devices, use the provided dynamic color scheme.
@@ -87,7 +88,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.light,
-            primarySwatch: Colors.blue,
+            primarySwatch: createMaterialColor(defaultColor),
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
@@ -111,24 +112,4 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-}
-
-MaterialColor createMaterialColor(Color color) {
-  List strengths = <double>[.05];
-  Map<int, Color> swatch = {};
-  final int r = color.red, g = color.green, b = color.blue;
-
-  for (int i = 1; i < 10; i++) {
-    strengths.add(0.1 * i);
-  }
-  for (var strength in strengths) {
-    final double ds = 0.5 - strength;
-    swatch[(strength * 1000).round()] = Color.fromRGBO(
-      r + ((ds < 0 ? r : (255 - r)) * ds).round(),
-      g + ((ds < 0 ? g : (255 - g)) * ds).round(),
-      b + ((ds < 0 ? b : (255 - b)) * ds).round(),
-      1,
-    );
-  }
-  return MaterialColor(color.value, swatch);
 }
