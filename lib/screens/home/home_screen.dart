@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
               return AnimatedFlipCounter(
                 value: value,
                 fractionDigits: 0,
-                textStyle: Theme.of(context).textTheme.headline1,
+                textStyle: Theme.of(context).textTheme.displayLarge,
               );
             },
           ),

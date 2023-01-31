@@ -88,12 +88,12 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.light,
-            primarySwatch: createMaterialColor(defaultColor),
+            primarySwatch: createMaterialColor(lightDynamic!.primary),
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
-            primarySwatch: createMaterialColor(darkDynamic!.onSurface),
+            primarySwatch: createMaterialColor(darkDynamic!.primary),
           ),
           themeMode: (context.watch<SettingsData>().appThemeMode == 0)
               ? ThemeMode.dark

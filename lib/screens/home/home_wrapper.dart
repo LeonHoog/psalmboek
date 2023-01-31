@@ -185,7 +185,10 @@ class _HomeScreensWrapperPlaceholder extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: context.watch<LocalStates>().colorScheme!.background,
+        floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         appBar: AppBar(
+          backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
           title: CardLoading(
             width: MediaQuery.of(context).size.width*.4,
             height: 25,
@@ -196,16 +199,16 @@ class _HomeScreensWrapperPlaceholder extends StatelessWidget {
             ),
           ),
           actions: const [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.settings),
-            ),
-          ],
-          bottom: const TabBar(
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Icon(Icons.settings),
+          ),],
+          bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.list)),
+              Tab(icon: Icon(Icons.home, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
+              Tab(icon: Icon(Icons.list, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
             ],
+            indicatorColor: context.watch<LocalStates>().colorScheme!.primary,
           ),
         ),
       ),
