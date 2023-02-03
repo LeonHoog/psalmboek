@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'custom_classes/bookmarks.dart';
 
-class LocalStates with ChangeNotifier {
+class CounterStates with ChangeNotifier {
   //VARIABLE NAMES:
-  //  count
-  //  dataVersionInput
-  //  dataVersionInputType
+  //  int count
 
   int _count = 100;
   int get count => _count;
@@ -16,6 +14,14 @@ class LocalStates with ChangeNotifier {
     _count = value;
     notifyListeners();
   }
+}
+
+class LocalStates with ChangeNotifier {
+  //VARIABLE NAMES:
+  //  int count
+  //  int dataVersionInput
+  //  int dataVersionInputType
+  //  ColorScheme colorScheme
 
   int _dataVersionInput = 0;
   int get dataVersionInput => _dataVersionInput;
@@ -28,6 +34,17 @@ class LocalStates with ChangeNotifier {
   int get dataVersionInputType => _dataVersionInputType;
   void setDataVersionInputType(value) {
     _dataVersionInputType = value;
+    notifyListeners();
+  }
+
+  ColorScheme? _colorScheme;
+  ColorScheme? get colorScheme => _colorScheme;
+  void setColorScheme(value) {
+    _colorScheme = value;
+    notifyListeners();
+  }
+
+  void notifyLocalStatesListeners() {
     notifyListeners();
   }
 }
@@ -47,21 +64,12 @@ class DatabaseContentProvider with ChangeNotifier {
 
 class SettingsData with ChangeNotifier {
   //VARIABLE NAMES:
-  //  listView
   //  autoTextSize
   //  textSize
   //  appThemeMode
   //  bookmarksList
 
   Box box = Hive.box('settings');
-  bool _listView = Hive.box('settings').get('listView') ?? true;
-  bool get listView => _listView;
-
-  void setListView(bool value) {
-    _listView = value;
-    notifyListeners();
-    box.put('listView', value);
-  }
 
   bool _autoTextSize = Hive.box('settings').get('autoTextSize') ?? true;
   bool get autoTextSize => _autoTextSize;
@@ -79,6 +87,10 @@ class SettingsData with ChangeNotifier {
     box.put('textSize', value);
   }
 
+  //appThemeMode
+  //  0: dark
+  //  1: light
+  //  2: system
   int _appThemeMode = Hive.box('settings').get('appThemeMode') ?? 0;
   int get appThemeMode => _appThemeMode;
   void setAppThemeMode(int value) {

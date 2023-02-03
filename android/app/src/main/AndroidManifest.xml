@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.psalmboek">
+    package="com.leonhoog.psalmboek">
    <application
         android:label="psalmboek"
         android:name="${applicationName}"
