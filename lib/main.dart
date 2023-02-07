@@ -1,7 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
@@ -12,16 +11,14 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('settings');
   runApp(
-    Phoenix(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => CounterStates()),
-          ChangeNotifierProvider(create: (_) => LocalStates()),
-          ChangeNotifierProvider(create: (_) => SettingsData()),
-          ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.json")),
-        ],
-        child: const MyApp(),
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterStates()),
+        ChangeNotifierProvider(create: (_) => LocalStates()),
+        ChangeNotifierProvider(create: (_) => SettingsData()),
+        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.json")),
+      ],
+      child: const MyApp(),
     ),
   );
 }

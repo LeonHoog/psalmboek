@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/bookmarks_list.dart';
@@ -61,9 +60,12 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
 
   @override
   void didChangePlatformBrightness() {
-    //TODO: BETTER IMPLEMENTATION
-    if (context.watch<SettingsData>().appThemeMode == 2)
-      Phoenix.rebirth(context);
+    //update app theme when platform detects change in theme brightness
+    if (context.watch<SettingsData>().appThemeMode == 2) {
+      context.read<SettingsData>().setAppThemeMode(2);
+      context.read<LocalStates>().notifyLocalStatesListeners();
+      setState(() {});
+    }
   }
 
   @override
@@ -95,6 +97,7 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
             onSelected: (item) {
               context.read<LocalStates>().setDataVersionInput(item[0]);
               context.read<LocalStates>().setDataVersionInputType(item[1]);
+              setState(() {});
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               PopupMenuItem(
