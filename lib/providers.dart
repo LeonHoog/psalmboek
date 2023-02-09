@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bson/bson.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -50,15 +51,14 @@ class LocalStates with ChangeNotifier {
 }
 
 class DatabaseContentProvider with ChangeNotifier {
-  String jsonAsset;
-  DatabaseContentProvider(this.jsonAsset);
-  Map<String, dynamic>? _data;
-  Map<String, dynamic>? get data => _data;
+  String bsonAsset;
+  DatabaseContentProvider(this.bsonAsset);
 
-  getJson(context) async {
-    _data = await rootBundle
-        .loadString(jsonAsset)
-        .then((jsonStr) => jsonDecode(jsonStr));
+  Future getBsonAsset() async {
+    final ByteData bsonAsset = await rootBundle.load(this.bsonAsset);
+    final bsonBytes = bsonAsset.buffer.asUint8List();
+
+    return BSON().deserialize(BsonBinary.from(bsonBytes));
   }
 }
 

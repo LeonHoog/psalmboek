@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/bookmarks_list.dart';
@@ -16,7 +14,7 @@ class HomeScreensWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset ).then((jsonStr) => jsonDecode(jsonStr)),
+      future: context.read<DatabaseContentProvider>().getBsonAsset(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           context.read<SettingsData>().getJsonBookmarks();
@@ -80,11 +78,7 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
             int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
             int value = (context.read<CounterStates>().count > maxVerse) ? maxVerse : context.read<CounterStates>().count;
 
-            Future<Map<String, dynamic>> getData() async {
-              return await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-            }
-
-            getData().then((data) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1], snapshot: widget.snapshot,),),));
+            context.read<DatabaseContentProvider>().getBsonAsset().then((data) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1], snapshot: widget.snapshot,),),));
           },
           label: Icon(Icons.menu_book, color: context.watch<LocalStates>().colorScheme!.onTertiary,),
           tooltip: "openen",

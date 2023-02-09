@@ -16,7 +16,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CounterStates()),
         ChangeNotifierProvider(create: (_) => LocalStates()),
         ChangeNotifierProvider(create: (_) => SettingsData()),
-        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.json")),
+        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.bson")),
       ],
       child: const MyApp(),
     ),
