@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
@@ -43,10 +41,7 @@ class BookmarksList extends StatelessWidget {
                   SlidableAction(
                     flex: 10,
                     onPressed: (BuildContext context) {
-                      Future<Map<String, dynamic>> getData() async {
-                        return await rootBundle.loadString(context.read<DatabaseContentProvider>().jsonAsset).then((jsonStr) => jsonDecode(jsonStr));
-                      }
-                      getData().then((songData) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),));
+                      context.read<DatabaseContentProvider>().getBsonAsset().then((songData) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: songData[songData["contents"][data[index].contentType]["id"]][data[index].index], snapshot: snapshot, reference: snapshot.data["contents"][data[index].contentType]["reference"],),),));
                     },
                     backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
                     foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,

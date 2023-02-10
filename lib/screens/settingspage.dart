@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -83,11 +84,11 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           const SizedBox(height: 15,), //extra padding
-          const Padding(
+          (!kIsWeb) ? const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text('app weergave', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
+          ) : const SizedBox(),
+          (!kIsWeb) ? ListTile(
             title: const Text('app thema'),
             trailing: Text(["donker", "licht", "systeem"][context.read<SettingsData>().appThemeMode], style: const TextStyle(fontStyle: FontStyle.italic),),
             onTap: () {
@@ -125,7 +126,7 @@ class SettingsPage extends StatelessWidget {
               }
                   );
               },
-          ),
+          ) : const SizedBox(),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text('gegevens', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
