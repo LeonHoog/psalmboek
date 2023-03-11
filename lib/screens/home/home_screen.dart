@@ -1,3 +1,4 @@
+import 'package:hive/hive.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
@@ -18,35 +19,41 @@ class HomeScreen extends StatelessWidget {
         alignment: Alignment.center,
         children:
         [
-          SleekCircularSlider(
-            appearance: CircularSliderAppearance(
-              size: (MediaQuery.of(context).size.height>MediaQuery.of(context).size.width)
-                  ? MediaQuery.of(context).size.height*.4
-                  : MediaQuery.of(context).size.width*.4,
-              customColors:  CustomSliderColors(
-                trackColor: context.watch<LocalStates>().colorScheme!.secondary,
-                progressBarColors: [
-                  context.watch<LocalStates>().colorScheme!.tertiary,
-                  context.watch<LocalStates>().colorScheme!.secondary,
-                  context.watch<LocalStates>().colorScheme!.primary,
-                  context.watch<LocalStates>().colorScheme!.onSurface
-                ],
-                shadowColor: context.watch<LocalStates>().colorScheme!.outline,
-              ),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height - 350,
+              minHeight: 0,
             ),
-            onChange: (double value) {
-              context.read<CounterStates>().setCounter(value.round().toInt());
-            },
-            min: 1,
-            max: maxVerse.toDouble(),
-            initialValue: value.toDouble(),
-            innerWidget: (i) {
-              return AnimatedFlipCounter(
-                value: value,
-                fractionDigits: 0,
-                textStyle: Theme.of(context).textTheme.displayLarge,
-              );
-            },
+            child: SleekCircularSlider(
+              appearance: CircularSliderAppearance(
+                size: (MediaQuery.of(context).size.height>MediaQuery.of(context).size.width)
+                    ? MediaQuery.of(context).size.height*.4
+                    : MediaQuery.of(context).size.width*.4,
+                customColors:  CustomSliderColors(
+                  trackColor: context.watch<LocalStates>().colorScheme!.secondary,
+                  progressBarColors: [
+                    context.watch<LocalStates>().colorScheme!.tertiary,
+                    context.watch<LocalStates>().colorScheme!.secondary,
+                    context.watch<LocalStates>().colorScheme!.primary,
+                    context.watch<LocalStates>().colorScheme!.onSurface
+                  ],
+                  shadowColor: context.watch<LocalStates>().colorScheme!.outline,
+                ),
+              ),
+              onChange: (double value) {
+                context.read<CounterStates>().setCounter(value.round().toInt());
+              },
+              min: 1,
+              max: maxVerse.toDouble(),
+              initialValue: value.toDouble(),
+              innerWidget: (i) {
+                return AnimatedFlipCounter(
+                  value: value,
+                  fractionDigits: 0,
+                  textStyle: Theme.of(context).textTheme.displayLarge,
+                );
+              },
+            ),
           ),
           Positioned(
             bottom: 50,
