@@ -8,18 +8,25 @@ import 'custom_classes/bookmarks.dart';
 class CounterStates with ChangeNotifier {
   //VARIABLE NAMES:
   //  int count
+  //  bool isAnimatingText
 
   int _count = 100;
   int get count => _count;
-  void setCounter(value) {
+  void setCounter(int value) {
     _count = value;
+    notifyListeners();
+  }
+
+  bool _isAnimatingText = false;
+  bool get isAnimatingText => _isAnimatingText;
+  void setIsAnimatingText(bool value) {
+    _isAnimatingText = value;
     notifyListeners();
   }
 }
 
 class LocalStates with ChangeNotifier {
   //VARIABLE NAMES:
-  //  int count
   //  int dataVersionInput
   //  int dataVersionInputType
   //  ColorScheme colorScheme
