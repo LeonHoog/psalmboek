@@ -42,8 +42,8 @@ dependencies:
   auto_size_text: ^3.0.0
   card_loading: ^0.3.0
   flutter_slidable: ^2.0.0
-  flutter_svg: ^2.0.3
-  dynamic_color: ^1.6.2
+  flutter_svg: ^2.0.4
+  dynamic_color: ^1.6.3
   bson: ^4.0.0
 
   # The following adds the Cupertino Icons font to your application.
