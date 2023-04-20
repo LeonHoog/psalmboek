@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class BookmarksClass {
   String? jsonAsset;
   int? contentType;
@@ -21,4 +23,15 @@ class BookmarksClass {
     data['verse'] = verse;
     return data;
   }
+}
+
+String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
+
+  List<String> newBookmarks = [];
+  for (int i = 0; i < bookmarks.length; i++)
+  {
+    newBookmarks.add(bookmarks[i].toJson() as String);
+  }
+  print(newBookmarks);
+  return jsonEncode(bookmarks);
 }
