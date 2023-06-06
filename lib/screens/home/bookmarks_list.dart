@@ -144,7 +144,7 @@ class BookmarksList extends StatelessWidget {
                         width: 800,
                         height: 800,
                         child: Center(
-                          child: QrImage(
+                          child: QrImageView(
                             backgroundColor: Colors.white,
                             data: jsonEncode(bookmarks),
                             version: QrVersions.auto,
@@ -213,7 +213,7 @@ class _CreateQRCodeCard extends StatelessWidget {
             margin: const EdgeInsets.all(32),
             child: Padding(
               padding: const EdgeInsets.all(8),
-              child: QrImage(
+              child: QrImageView(
                 data: jsonEncode(shareVersionQR)+jsonEncode(bookmarks),
                 version: QrVersions.auto,
                 errorCorrectionLevel: QrErrorCorrectLevel.M,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/main_widget/main_widget.dart';
-import 'package:psalmboek/main_widget/main_widget_web.dart';
+import 'package:psalmboek/main_widget/main_widget_base.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       context.read<LocalStates>().setColorScheme(
           ColorScheme.fromSeed(seedColor: defaultColor, brightness: Brightness.dark)
       );
-      return const MainWidgetWeb(defaultColor: defaultColor);
+      return const MainWidgetBase(primaryColorLight: defaultColor, primaryColorDark: defaultColor);
     }
   }
 }
