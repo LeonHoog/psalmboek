@@ -29,9 +29,12 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
 
   List<String> newBookmarks = [];
   for (int i = 0; i < bookmarks.length; i++)
-  {
     newBookmarks.add(bookmarks[i].toJson() as String);
-  }
-  print(newBookmarks);
+
   return jsonEncode(bookmarks);
+}
+
+List<BookmarksClass> createBookmarksListFromJson(String json) {
+  List<dynamic> parsedJson = jsonDecode(json);
+  return parsedJson.map((e) => BookmarksClass.fromJson(e)).toList();
 }

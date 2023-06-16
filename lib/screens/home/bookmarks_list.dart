@@ -1,9 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
+import 'package:psalmboek/global_constants.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
 import 'package:psalmboek/shared_code/songtext.dart';
@@ -17,7 +18,6 @@ class BookmarksList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<BookmarksClass> bookmarks = context.watch<SettingsData>().bookmarks ?? [];
     int itemCount = bookmarks.length;
-    int shareVersionQR = 1;
 
     if (itemCount != 0) {
       return Scrollbar(
@@ -49,28 +49,16 @@ class BookmarksList extends StatelessWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          context.read<DatabaseContentProvider>()
-                              .getBsonAsset()
-                              .then((songData) =>
+                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) =>
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) =>
                                     SongPageText(
-                                      data: songData[songData["contents"][bookmarks[index]
-                                          .contentType]["id"]][bookmarks[index]
-                                          .index],
+                                      data: songData[songData["contents"][bookmarks[index].contentType]["id"]][bookmarks[index].index],
                                       snapshot: snapshot,
-                                      reference: snapshot
-                                          .data["contents"][bookmarks[index]
-                                          .contentType]["reference"],),),));
+                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),));
                         },
-                        backgroundColor: context
-                            .watch<LocalStates>()
-                            .colorScheme!
-                            .primary,
-                        foregroundColor: context
-                            .watch<LocalStates>()
-                            .colorScheme!
-                            .onPrimary,
+                        backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
+                        foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.menu_book,
                         label: "Meer",
@@ -84,17 +72,10 @@ class BookmarksList extends StatelessWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          context.read<SettingsData>().removeBookmarkFromList(
-                              bookmarks[index]);
+                          context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
                         },
-                        backgroundColor: context
-                            .watch<LocalStates>()
-                            .colorScheme!
-                            .secondary,
-                        foregroundColor: context
-                            .watch<LocalStates>()
-                            .colorScheme!
-                            .onSecondary,
+                        backgroundColor: context.watch<LocalStates>().colorScheme!.secondary,
+                        foregroundColor: context.watch<LocalStates>().colorScheme!.onSecondary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.delete,
                         label: 'Wis',
@@ -118,7 +99,7 @@ class BookmarksList extends StatelessWidget {
               if (itemCount <= 25) {
                 return _CreateQRCodeCard(
                   bookmarks: bookmarks,
-                  shareVersionQR: shareVersionQR,
+                  shareVersionQR: breakingVersionShareQR,
                 );
               }
             }
@@ -132,39 +113,34 @@ class BookmarksList extends StatelessWidget {
           const Icon(Icons.qr_code_2_rounded, size: 200, color: Colors.grey,),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: _BlankCard(child: InkWell(
-              onTap: (){
+            child: _BlankCard(
+              child: InkWell(
+              onTap: () {
                 showDialog<void>(
                   context: context,
-                  barrierDismissible: false, // user must tap button!
+                  barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Bladwijzers Delen'),
-                      content: SizedBox(
-                        width: 800,
-                        height: 800,
-                        child: Center(
-                          child: QrImageView(
-                            backgroundColor: Colors.white,
-                            data: jsonEncode(bookmarks),
-                            version: QrVersions.auto,
-                            size: 200.0,
-                            errorCorrectionLevel: QrErrorCorrectLevel.M,
+                    MobileScannerController cameraController = MobileScannerController();
+                        return Scaffold(
+                          appBar: AppBar(
+                            title: const Text("Bladwijzers Scannen"),
+                            actions: [
+                              IconButton(
+                                icon: const Icon(Icons.flip_camera_android),
+                                iconSize: 32.0,
+                                onPressed: () => cameraController.switchCamera(),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Terug'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-
-                      ],
-                    );
-                  },
-                );
+                          body: MobileScanner(
+                            controller: cameraController,
+                            onDetect: (capture) {
+                              _applyJson(context, capture);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      });
               },
               child: SizedBox(
                 height: 60,
@@ -184,7 +160,6 @@ class BookmarksList extends StatelessWidget {
         ],
       );
     }
-
   }
 }
 
@@ -195,35 +170,76 @@ class _CreateQRCodeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double codeSize = MediaQuery.of(context).size.shortestSide * .4;
     return _BlankCard(
-      child: ExpansionTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
-            ),
-            Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), color: context.watch<LocalStates>().colorScheme?.onSurface)),
-          ],
-        ),
-        children: [
-          Card(
-            color: Colors.white,
-            margin: const EdgeInsets.all(32),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: QrImageView(
-                data: jsonEncode(shareVersionQR)+jsonEncode(bookmarks),
-                version: QrVersions.auto,
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
+      child: InkWell(
+        onTap: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Bladwijzers delen'),
+              content: Card(
+                color: Colors.white,
+                margin: const EdgeInsets.all(32),
+                child: SizedBox(
+                  height: codeSize,
+                  width: codeSize,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: QrImageView(
+                      data: jsonEncode(shareVersionQR) + jsonEncode(bookmarks),
+                      version: QrVersions.auto,
+                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+                    ),
+                  ),
+                ),
               ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'OK'),
+                  child: const Text('Terug'),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
+                  ),
+                  Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), color: context.watch<LocalStates>().colorScheme?.onSurface)),
+                ],
+              ),
+        ),
       ),
     );
   }
+}
+
+void _applyJson(BuildContext context, BarcodeCapture capture) {
+  int? breakingVersion;
+  String? readData;
+  try {
+    final List<Barcode> barcodes = capture.barcodes;
+    readData = barcodes[0].rawValue!;
+    breakingVersion = int.parse(readData[0]);
+    readData = readData.substring(1);
+  } catch (e) {}
+
+  if (breakingVersion! != breakingVersionShareQR)
+    return;
+  
+  context.read<SettingsData>().clearBookmarks();
+  
+  List<BookmarksClass> bookmarks = createBookmarksListFromJson(readData!);
+
+  for (BookmarksClass bookmark in bookmarks)
+    context.read<SettingsData>().addBookmarkToList(bookmark);
 }
 
 
@@ -277,4 +293,3 @@ class _BlankCard extends StatelessWidget {
     );
   }
 }
-
