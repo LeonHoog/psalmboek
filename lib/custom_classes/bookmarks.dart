@@ -120,7 +120,7 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
       sublistBookmarks.clear();
     }
   }
-  return jsonEncode(returner);
+  return jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
 }
 
 List<BookmarksClass> createBookmarksListFromJson(String json) {
