@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -71,8 +70,7 @@ class BookmarksList extends StatelessWidget {
                       ),
                       SlidableAction(
                         flex: 10,
-                        onPressed: (BuildContext context) {
-                          context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                        onPressed: (BuildContext context) {context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
                         },
                         backgroundColor: context.watch<LocalStates>().colorScheme!.secondary,
                         foregroundColor: context.watch<LocalStates>().colorScheme!.onSecondary,
@@ -96,7 +94,7 @@ class BookmarksList extends StatelessWidget {
               );
             }
             else {
-              if (itemCount <= 25) {
+              if (itemCount <= 100) {
                 return _CreateQRCodeCard(
                   bookmarks: bookmarks,
                   shareVersionQR: breakingVersionShareQR,
@@ -187,7 +185,7 @@ class _CreateQRCodeCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8),
                     child: QrImageView(
-                      data: jsonEncode(shareVersionQR) + jsonEncode(bookmarks),
+                      data: createSharableBookmarksJson(bookmarks),
                       version: QrVersions.auto,
                       errorCorrectionLevel: QrErrorCorrectLevel.M,
                     ),

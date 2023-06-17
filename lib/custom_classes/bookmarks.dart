@@ -1,40 +1,139 @@
 import 'dart:convert';
+import 'package:psalmboek/global_constants.dart';
 
 class BookmarksClass {
   String? jsonAsset;
   int? contentType;
   int? index;
   int? verse;
-
   BookmarksClass({this.jsonAsset, this.contentType, this.index, this.verse});
 
-  BookmarksClass.fromJson(Map<String, dynamic> json) {
-    jsonAsset = json['jsonAsset'];
-    contentType = json['contentType'];
-    index = json['index'];
-    verse = json['verse'];
+  factory BookmarksClass.fromShareBookmarkCategory(
+    _ShareBookmarkCategory shareBookmarkCategory,
+    int i,
+  ) {
+    return BookmarksClass(
+      jsonAsset: shareBookmarkCategory.jsonAsset,
+      contentType: shareBookmarkCategory.bookmarksData![i].contentType,
+      index: shareBookmarkCategory.bookmarksData![i].index,
+      verse: shareBookmarkCategory.bookmarksData![i].verse,
+    );
+  }
+
+  factory BookmarksClass.fromJson(Map<String, dynamic> json) {
+    return BookmarksClass(
+      jsonAsset: json['j'],
+      contentType: json['c'],
+      index: json['i'],
+      verse: json['v'],
+    );
+  }
+
+ Map<String, dynamic> toJson() {
+    return {
+      'j': jsonAsset,
+      'c': contentType,
+      'i': index,
+      'v': verse,
+    };
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+class _ShareBookmarkCategory {
+  String? jsonAsset;
+  List<_ShareBookmarkItem>? bookmarksData;
+
+  _ShareBookmarkCategory({required this.jsonAsset, required this.bookmarksData});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'j': jsonAsset,
+      'b': bookmarksData!.map((item) => item.toJson()).toList(),
+    };
+  }
+
+  factory _ShareBookmarkCategory.fromJson(Map<String, dynamic> json) {
+    return _ShareBookmarkCategory(
+      jsonAsset: json['j'],
+      bookmarksData: List<_ShareBookmarkItem>.from(
+        json['b'].map((_bookmark) => _ShareBookmarkItem.fromJson(_bookmark)),
+      ),
+    );
+  }
+}
+
+class _ShareBookmarkItem {
+  int contentType;
+  int index;
+  int verse;
+
+  _ShareBookmarkItem({
+    required this.contentType,
+    required this.index,
+    required this.verse,
+  });
+
+  factory _ShareBookmarkItem.fromJson(Map<String, dynamic> json) {
+    return _ShareBookmarkItem(
+      contentType: json['c'],
+      index: json['i'],
+      verse: json['v'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['jsonAsset'] = jsonAsset;
-    data['contentType'] = contentType;
-    data['index'] = index;
-    data['verse'] = verse;
-    return data;
+    return {
+      'c': contentType,
+      'i': index,
+      'v': verse,
+    };
   }
 }
 
+//////////////////////////////////////////////////////////////////////
 String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
+  List<_ShareBookmarkCategory> returner = [];
 
-  List<String> newBookmarks = [];
-  for (int i = 0; i < bookmarks.length; i++)
-    newBookmarks.add(bookmarks[i].toJson() as String);
+  List<BookmarksClass> sublistBookmarks = [];
+  for (int i = 0; i < bookmarks.length; i++) {
+    sublistBookmarks.add(bookmarks[i]);
 
-  return jsonEncode(bookmarks);
+    if (i == bookmarks.length - 1 ||
+        bookmarks[i].jsonAsset != bookmarks[i + 1].jsonAsset) {
+      List<_ShareBookmarkItem> _sublistBookmarks = [];
+      for (int j = 0; j < sublistBookmarks.length; j++) {
+        BookmarksClass _bookmark = sublistBookmarks[j];
+        _sublistBookmarks.add(
+          _ShareBookmarkItem(
+            contentType: _bookmark.contentType!,
+            index: _bookmark.index!,
+            verse: _bookmark.verse!,
+          ),
+        );
+      }
+      returner.add(_ShareBookmarkCategory(
+        jsonAsset: sublistBookmarks.last.jsonAsset!,
+        bookmarksData: _sublistBookmarks,
+      ));
+      sublistBookmarks.clear();
+    }
+  }
+  return jsonEncode(returner);
 }
 
 List<BookmarksClass> createBookmarksListFromJson(String json) {
+  List<BookmarksClass> returner = [];
+
   List<dynamic> parsedJson = jsonDecode(json);
-  return parsedJson.map((e) => BookmarksClass.fromJson(e)).toList();
+  List<_ShareBookmarkCategory> categories = parsedJson.map((e) => _ShareBookmarkCategory.fromJson(e as Map<String, dynamic>)).toList();
+
+  for (_ShareBookmarkCategory parsedObject in categories) {
+    for (int i = 0; i < parsedObject.bookmarksData!.length; i++) {
+      returner.add(BookmarksClass.fromShareBookmarkCategory(parsedObject, i));
+    }
+  }
+
+  return returner;
 }
