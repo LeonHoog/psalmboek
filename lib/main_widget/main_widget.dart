@@ -1,10 +1,8 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:psalmboek/main_widget/main_widget_base.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/screens/home/home_wrapper.dart';
-import 'package:psalmboek/shared_code/create_material_color.dart';
 
 class MainWidget extends StatelessWidget {
   final Color defaultColor;
@@ -53,42 +51,14 @@ class MainWidget extends StatelessWidget {
         }
         else
         { // system
-          if (WidgetsBinding.instance.window.platformBrightness == Brightness.light) {
+          if (View.of(context).platformDispatcher.platformBrightness == Brightness.light) {
             context.read<LocalStates>().setColorScheme(lightDynamic);
-          } else if (WidgetsBinding.instance.window.platformBrightness == Brightness.dark) {
+          } else if (View.of(context).platformDispatcher.platformBrightness == Brightness.dark) {
             context.read<LocalStates>().setColorScheme(darkDynamic);
           }
         }
 
-        return MaterialApp(
-          title: 'Psalmboek',
-          home: const HomeScreensWrapper(),
-
-          //APP THEMA
-          theme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.light,
-            primarySwatch: createMaterialColor(lightDynamic!.primary),
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.dark,
-            primarySwatch: createMaterialColor(darkDynamic!.primary),
-          ),
-          themeMode: (context.watch<SettingsData>().appThemeMode == 0)
-              ? ThemeMode.dark
-              : (context.watch<SettingsData>().appThemeMode == 1)
-              ? ThemeMode.light
-              : ThemeMode.system,
-          //VERTALINGEN
-          supportedLocales: const [
-            Locale('nl',''),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-        );
+        return MainWidgetBase(primaryColorLight: lightDynamic!.primary, primaryColorDark: darkDynamic!.primary);
       },
     );
   }

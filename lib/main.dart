@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/main_widget/main_widget.dart';
-import 'package:psalmboek/main_widget/main_widget_web.dart';
+import 'package:psalmboek/main_widget/main_widget_base.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+// ---- APP STRUCTURE ----
+// MAIN					            opens Hive database, initializes providers, returns MainWidget
+// MAIN_WIDGET			        sets colors/themes, returns MaterialApp with HomeScreensWrapper as its home
+// HOMESCREENSWRAPPER       contains logic for loading bson, contains button that navigates to SongPageText, returns scaffold with HomeScreen and BookmarksList as body
+//     HOMESCREEN           screen with song selector, contains button that navigates to
+//     BOOKMARKSLIST        screen of created bookmarks
+// SONGPAGE                 screen displaying a selected song
 
 void main() async {
   await Hive.initFlutter();
@@ -17,13 +25,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SettingsData()),
         ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.bson")),
       ],
-      child: const MyApp(),
+      child: const Main(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Main extends StatelessWidget {
+  const Main({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,7 @@ class MyApp extends StatelessWidget {
       context.read<LocalStates>().setColorScheme(
           ColorScheme.fromSeed(seedColor: defaultColor, brightness: Brightness.dark)
       );
-      return const MainWidgetWeb(defaultColor: defaultColor);
+      return const MainWidgetBase(primaryColorLight: defaultColor, primaryColorDark: defaultColor);
     }
   }
 }

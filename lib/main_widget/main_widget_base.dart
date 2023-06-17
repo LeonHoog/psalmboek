@@ -5,9 +5,11 @@ import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/home_wrapper.dart';
 import 'package:psalmboek/shared_code/create_material_color.dart';
 
-class MainWidgetWeb extends StatelessWidget {
-  final Color defaultColor;
-  const MainWidgetWeb({Key? key, required this.defaultColor}) : super(key: key);
+class MainWidgetBase extends StatelessWidget {
+  final Color primaryColorLight;
+  final Color primaryColorDark;
+
+  const MainWidgetBase({super.key, required this.primaryColorLight, required this.primaryColorDark});
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +21,12 @@ class MainWidgetWeb extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        primarySwatch: createMaterialColor(defaultColor),
+        primarySwatch: createMaterialColor(primaryColorLight),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        primarySwatch: createMaterialColor(defaultColor),
+        primarySwatch: createMaterialColor(primaryColorDark),
       ),
       themeMode: (context.watch<SettingsData>().appThemeMode == 0)
           ? ThemeMode.dark
