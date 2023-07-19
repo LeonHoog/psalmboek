@@ -14,15 +14,23 @@ class SongPageText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    int aantalVerzen = data["verzen"].length;
+    int aantalVoorzangVerzen = 0;
+    // CHECK FOR PRELUDE
+    try {
+      aantalVoorzangVerzen = data["voorzang"].length ?? 0;
+      aantalVerzen += aantalVoorzangVerzen;
+    } catch (e) {}
+
     return DefaultTabController(
-      length: data["verzen"].length,
+      length: aantalVerzen,
       child: Scaffold(
         backgroundColor: context.watch<LocalStates>().colorScheme!.background,
         appBar: AppBar(
           backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
           title: Text((reference ?? snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"]) +" " + data["nr"].toString()),
         ),
-        body: _SongPageBodyList(data: data,),
+        body: _SongPageBodyList(data: data),
       ),
     );
   }
@@ -34,18 +42,38 @@ class _SongPageBodyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int aantalVerzen = data["verzen"].length;
+    int aantalVoorzangVerzen = 0;
+    // CHECK FOR PRELUDE
+    try {
+      aantalVoorzangVerzen = data["voorzang"].length ?? 0;
+      aantalVerzen += aantalVoorzangVerzen;
+    } catch (e) {}
+
     return RawScrollbar(
       thumbColor: context.watch<LocalStates>().colorScheme!.primary,
       radius: const Radius.circular(50),
       child: ListView.builder(
-        itemCount: data["verzen"].length,
+        itemCount: aantalVerzen,
         itemBuilder: (context, i) {
           return InkWell(
             onLongPress: () {
-              BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
-              if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
-                context.read<SettingsData>().addBookmarkToList(BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1));
+              // ADD BOOKMARK: VERSE
+              if (i < aantalVoorzangVerzen) {
+                BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: -(i+1));
+                if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
+                  context.read<SettingsData>().addBookmarkToList(bookmark);
+                }
               }
+
+              // ADD BOOKMARK: PRELUDE
+              else {
+                 BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
+                if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
+                  context.read<SettingsData>().addBookmarkToList(bookmark);
+                }
+              }
+
               snackBarBookmarkCreated(context);
             },
             child: Padding(
@@ -56,11 +84,15 @@ class _SongPageBodyList extends StatelessWidget {
                 children: [
                   const SizedBox(height: 5,),
                   Text(
-                    "vers ${(i+1).toInt()}",
+                    (i < aantalVoorzangVerzen) ? "voorzang" : "vers ${(i+1-aantalVoorzangVerzen).toInt()}",
                     style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  SongText(data: data, verse: i),
+                  SongText(
+                    data: data,
+                    verse: (i < aantalVoorzangVerzen) ?  i : i - aantalVoorzangVerzen,
+                    isPrelude: i < aantalVoorzangVerzen,
+                  ),
                   const SizedBox(height: 10,),
                 ],
               ),

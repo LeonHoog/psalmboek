@@ -6,17 +6,28 @@ import 'package:psalmboek/providers.dart';
 class SongText extends StatelessWidget {
   final Map<String, dynamic> data;
   final int verse;
-  const SongText({Key? key, required this.data, required this.verse}) : super(key: key);
+  final bool isPrelude;
+  const SongText({Key? key, required this.data, required this.verse, this.isPrelude = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String content = (data["verzen"][verse] + "\n");
+
+    int _verse = (verse < 0) ? (verse + 2).abs()  : verse;
+
+    String content;
+    if (isPrelude || verse < 0) {
+      content = (data["voorzang"][_verse] + "\n");
+    }
+    else {
+      content = (data["verzen"][_verse] + "\n");
+    }
+
     return context.watch<SettingsData>().autoTextSize
         ? AutoSizeText(
             content,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble()),
-            maxLines: '\n'.allMatches(data["verzen"][verse]).length+1,
+            maxLines: '\n'.allMatches(data["verzen"][_verse]).length+1,
         )
         : Text(
             content,

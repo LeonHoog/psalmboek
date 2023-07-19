@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/global_constants.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
+import 'package:psalmboek/shared_code/bookmarks_scanner.dart';
 import 'package:psalmboek/shared_code/songtext.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -32,12 +32,12 @@ class BookmarksList extends StatelessWidget {
                   key: ValueKey(index),
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
-                    /* dismissible: DismissiblePane(
-                  onDismissed: () {
-                    //TODO: PROBLEMATISCH
-                    // context.read<SettingsData>().removeBookmarkFromList(data[index]);
-                  },
-                ),*/
+                //      dismissible: DismissiblePane(
+                //   onDismissed: () {
+                //     //TODO: PROBLEMATISCH
+                //     context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                //   },
+                // ),
                     children: [
                       const Flexible(
                         flex: 1,
@@ -114,31 +114,7 @@ class BookmarksList extends StatelessWidget {
             child: _BlankCard(
               child: InkWell(
               onTap: () {
-                showDialog<void>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    MobileScannerController cameraController = MobileScannerController();
-                        return Scaffold(
-                          appBar: AppBar(
-                            title: const Text("Bladwijzers Scannen"),
-                            actions: [
-                              IconButton(
-                                icon: const Icon(Icons.flip_camera_android),
-                                iconSize: 32.0,
-                                onPressed: () => cameraController.switchCamera(),
-                              ),
-                            ],
-                          ),
-                          body: MobileScanner(
-                            controller: cameraController,
-                            onDetect: (capture) {
-                              _applyJson(context, capture);
-                              Navigator.pop(context);
-                            },
-                          ),
-                        );
-                      });
+                bookmarksScanner(context, true);
               },
               child: SizedBox(
                 height: 60,
@@ -176,18 +152,46 @@ class _CreateQRCodeCard extends StatelessWidget {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text('Bladwijzers delen'),
-              content: Card(
-                color: Colors.white,
-                margin: const EdgeInsets.all(32),
-                child: SizedBox(
-                  height: codeSize,
-                  width: codeSize,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: QrImageView(
-                      data: createSharableBookmarksJson(bookmarks),
-                      version: QrVersions.auto,
-                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+              content: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                          appBar: AppBar(title: const Text("Bladwijzers delen"),),
+                          body: Center(
+                            child: Card(
+                              color: Colors.white,
+                              margin: const EdgeInsets.all(32),
+                              child: SizedBox(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: QrImageView(
+                                    data: createSharableBookmarksJson(bookmarks),
+                                    version: QrVersions.auto,
+                                    errorCorrectionLevel: QrErrorCorrectLevel.M,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ));
+                },
+                child: Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.all(32),
+                  child: SizedBox(
+                    height: codeSize,
+                    width: codeSize,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: QrImageView(
+                        data: createSharableBookmarksJson(bookmarks),
+                        version: QrVersions.auto,
+                        errorCorrectionLevel: QrErrorCorrectLevel.M,
+                      ),
                     ),
                   ),
                 ),
@@ -218,28 +222,6 @@ class _CreateQRCodeCard extends StatelessWidget {
     );
   }
 }
-
-void _applyJson(BuildContext context, BarcodeCapture capture) {
-  int? breakingVersion;
-  String? readData;
-  try {
-    final List<Barcode> barcodes = capture.barcodes;
-    readData = barcodes[0].rawValue!;
-    breakingVersion = int.parse(readData[0]);
-    readData = readData.substring(1);
-  } catch (e) {}
-
-  if (breakingVersion! != breakingVersionShareQR)
-    return;
-  
-  context.read<SettingsData>().clearBookmarks();
-  
-  List<BookmarksClass> bookmarks = createBookmarksListFromJson(readData!);
-
-  for (BookmarksClass bookmark in bookmarks)
-    context.read<SettingsData>().addBookmarkToList(bookmark);
-}
-
 
 class _BookmarkCard extends StatelessWidget {
   final AsyncSnapshot<dynamic> snapshot;

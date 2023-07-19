@@ -2,10 +2,11 @@ import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/screens/home/bookmarks_list.dart';
+import 'package:psalmboek/screens/bookmarks/bookmarks_list.dart';
 import 'package:psalmboek/screens/home/home_screen.dart';
 import 'package:psalmboek/screens/settingspage.dart';
 import 'package:psalmboek/screens/songpage.dart';
+import 'package:psalmboek/shared_code/bookmarks_scanner.dart';
 
 ///Loads and decodes a JSON string from an asset, returning either a placeholder widget or the HomeScreen widget with the decoded data.
 class HomeScreensWrapper extends StatelessWidget {
@@ -121,6 +122,12 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
           [
             IconButton(
               onPressed: () {
+                bookmarksScanner(context, false);
+              },
+              icon: const Icon(Icons.qr_code_scanner),
+            ),
+            IconButton(
+              onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const SettingsPage(),
@@ -142,7 +149,7 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
         body: TabBarView(
           controller: tabController,
           children: [
-            HomeScreen(snapshot: widget.snapshot),
+            HomeScreenMobile(snapshot: widget.snapshot),
             BookmarksList(snapshot: widget.snapshot),
           ],
         ),
