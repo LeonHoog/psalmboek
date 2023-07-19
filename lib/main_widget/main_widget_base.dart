@@ -22,11 +22,13 @@ class MainWidgetBase extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
         primarySwatch: createMaterialColor(primaryColorLight),
+        fontFamily: context.watch<SettingsData>().fontFamily
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         primarySwatch: createMaterialColor(primaryColorDark),
+        fontFamily: context.watch<SettingsData>().fontFamily
       ),
       themeMode: (context.watch<SettingsData>().appThemeMode == 0)
           ? ThemeMode.dark

@@ -58,15 +58,19 @@ class SettingsPage extends StatelessWidget {
                       },
                       child: const Text('extra groot', style: TextStyle(fontSize: 27),),
                     ),
-                   //TODO: AANGEPASTE GROOTTE 
-                    /* const Divider(),
-                    SimpleDialogOption(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.read<LocalSettings>().setTextSize(18);
-                      },
-                      child: const Text('aangepast'),
-                    ),*/
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: Text("aangepast:", style: TextStyle(fontSize: context.watch<SettingsData>().textSize.toDouble()),),
+                    ),
+                    Slider(
+                      min: 8,
+                      max: 50,
+                      value: context.watch<SettingsData>().textSize.toDouble(),
+                      onChanged: (value) {
+                        context.read<SettingsData>().setTextSize(value.toInt());
+                      }
+                      ),
                   ],
                 );
               }
@@ -127,6 +131,35 @@ class SettingsPage extends StatelessWidget {
                   );
               },
           ) : const SizedBox(),
+          ListTile(
+            title: const Text('lettertype'),
+            trailing: Text(context.watch<SettingsData>().fontFamily, style: const TextStyle(fontStyle: FontStyle.italic)),
+            onTap: () {
+              showDialog(context: context, builder: (BuildContext context) {
+                return SimpleDialog(
+                  title: const Text('Selecteer lettertype'),
+                  children: <Widget>[
+                    const Divider(),
+                    SimpleDialogOption(
+                      onPressed: () {
+                        context.read<SettingsData>().setFontFamily("Roboto");
+                        Navigator.pop(context);
+                        },
+                      child: const Text("Roboto"),
+                    ),
+                    SimpleDialogOption(
+                      onPressed: () {
+                        context.read<SettingsData>().setFontFamily("OpenDyslexic");
+                        Navigator.pop(context);
+                      },
+                      child: const Text('OpenDyslexic', style: TextStyle(fontFamily: 'OpenDyslexic'),),
+                    ),
+                  ],
+                );
+              }
+                  );
+              },
+          ),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text('gegevens', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
