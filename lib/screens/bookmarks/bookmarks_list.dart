@@ -95,10 +95,14 @@ class BookmarksList extends StatelessWidget {
             }
             else {
               if (itemCount <= 100) {
+                // CHECK WHETHER QR CODE CAN BE GENERATED
                 return _CreateQRCodeCard(
                   bookmarks: bookmarks,
                   shareVersionQR: breakingVersionShareQR,
                 );
+              }
+              else { // QR CODE CANNOT BE GENERATED
+                return null;
               }
             }
           },
