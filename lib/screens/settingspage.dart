@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -195,21 +196,42 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: const Text("over Psalmboek"),
             onTap: () {
-              showAboutDialog(
+              showDialog(
                 context: context,
-               applicationIcon: SizedBox(
-                 height: 50,
-                 width: 50,
-                 child: SvgPicture.asset(
-                   "assets/icon/logo.svg",
-                 ),
-               ),
-               // applicationVersion: '0.5.0',
+                builder: (context) => FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData || snapshot.hasError) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return _AboutDialogWidget(applicationVersion: snapshot.data?.version);
+                    }
+                  },
+                ),
               );
             },
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AboutDialogWidget extends StatelessWidget {
+  final String? applicationVersion;
+  const _AboutDialogWidget({super.key, required this.applicationVersion});
+
+  @override
+  Widget build(BuildContext context) {
+    return AboutDialog(
+      applicationIcon: SizedBox(
+        height: 50,
+        width: 50,
+        child: SvgPicture.asset(
+          "assets/icon/logo.svg",
+        ),
+      ),
+      applicationVersion: applicationVersion,
     );
   }
 }
