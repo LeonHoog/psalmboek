@@ -7,6 +7,7 @@ import 'package:psalmboek/providers.dart';
 
 void bookmarksScanner(BuildContext context, bool? clearBookmarks) {
   MobileScannerController cameraController = MobileScannerController();
+  bool isScanned = false;
   Navigator.push(
     context, MaterialPageRoute(
       builder: (context) => Scaffold(
@@ -18,15 +19,18 @@ void bookmarksScanner(BuildContext context, bool? clearBookmarks) {
               iconSize: 32.0,
               onPressed: () => cameraController.switchCamera(),
               ),
-              ],
-              ),
-              body: MobileScanner(
-                controller: cameraController,
-                onDetect: (capture) {
-                  _applyJson(context, capture, clearBookmarks ?? false);
-                  Navigator.pop(context);
-                  },
-              ),
+          ],
+        ),
+        body: MobileScanner(
+          controller: cameraController,
+          onDetect: (capture) {
+            if (!isScanned) {
+              _applyJson(context, capture, clearBookmarks ?? false);
+              Navigator.pop(context);
+            }
+            isScanned = true;
+          },
+        ),
     )));
 }
 
