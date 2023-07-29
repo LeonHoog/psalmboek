@@ -38,7 +38,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   sleek_circular_slider: ^2.0.1
-  animated_flip_counter: ^0.2.5
+  animated_flip_counter: ^0.2.6
   auto_size_text: ^3.0.0
   card_loading: ^0.3.0
   flutter_slidable: ^3.0.0

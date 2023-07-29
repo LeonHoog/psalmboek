@@ -219,7 +219,7 @@ class SettingsPage extends StatelessWidget {
 
 class _AboutDialogWidget extends StatelessWidget {
   final String? applicationVersion;
-  const _AboutDialogWidget({super.key, required this.applicationVersion});
+  const _AboutDialogWidget({required this.applicationVersion});
 
   @override
   Widget build(BuildContext context) {

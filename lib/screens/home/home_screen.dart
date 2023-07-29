@@ -48,12 +48,11 @@ class HomeScreenMobile extends StatelessWidget {
                 context.read<CounterStates>().setIsAnimatingText(true);
               },
               onChangeEnd: (i) async {
-                if (context.read<CounterStates>().isAnimatingText == true) {
+                final counterStates = context.read<CounterStates>();
+                if (counterStates.isAnimatingText == true) {
                   await Future.delayed(const Duration(milliseconds: spinnerDuration ~/ 2));
-                  context.read<CounterStates>().setIsAnimatingText(false);
-                } else {
-                  context.read<CounterStates>().setIsAnimatingText(false);
                 }
+                counterStates.setIsAnimatingText(false);
               },
               min: 1,
               max: maxVerse.toDouble(),
