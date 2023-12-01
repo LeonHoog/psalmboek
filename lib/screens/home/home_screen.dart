@@ -6,7 +6,7 @@ import 'package:psalmboek/providers.dart';
 
 class HomeScreenMobile extends StatelessWidget {
   final AsyncSnapshot<dynamic> snapshot;
-  const HomeScreenMobile({Key? key, required this.snapshot}) : super(key: key);
+  const HomeScreenMobile({super.key, required this.snapshot});
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class BookmarksList extends StatelessWidget {
   final AsyncSnapshot<dynamic> snapshot;
-  const BookmarksList({Key? key, required this.snapshot}) : super(key: key);
+  const BookmarksList({super.key, required this.snapshot});
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,7 @@ class BookmarksList extends StatelessWidget {
 class _CreateQRCodeCard extends StatelessWidget {
   final List<BookmarksClass> bookmarks;
   final int shareVersionQR;
-  const _CreateQRCodeCard({Key? key, required this.bookmarks, required this.shareVersionQR}) : super(key: key);
+  const _CreateQRCodeCard({required this.bookmarks, required this.shareVersionQR});
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +231,7 @@ class _BookmarkCard extends StatelessWidget {
   final AsyncSnapshot<dynamic> snapshot;
   final BookmarksClass data;
 
-  const _BookmarkCard({Key? key, required this.snapshot, required this.data}) : super(key: key);
+  const _BookmarkCard({required this.snapshot, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +262,7 @@ class _BookmarkCard extends StatelessWidget {
 
 class _BlankCard extends StatelessWidget {
   final Widget child;
-  const _BlankCard({Key? key, required this.child}) : super(key: key);
+  const _BlankCard({required this.child});
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ class SongText extends StatelessWidget {
   final Map<String, dynamic> data;
   final int verse;
   final bool isPrelude;
-  const SongText({Key? key, required this.data, required this.verse, this.isPrelude = false}) : super(key: key);
+  const SongText({super.key, required this.data, required this.verse, this.isPrelude = false});
 
   @override
   Widget build(BuildContext context) {

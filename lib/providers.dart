@@ -65,7 +65,7 @@ class DatabaseContentProvider with ChangeNotifier {
     final ByteData bsonAsset = await rootBundle.load(this.bsonAsset);
     final bsonBytes = bsonAsset.buffer.asUint8List();
 
-    return BSON().deserialize(BsonBinary.from(bsonBytes));
+    return BsonCodec.deserialize(BsonBinary.from(bsonBytes));
   }
 }
 

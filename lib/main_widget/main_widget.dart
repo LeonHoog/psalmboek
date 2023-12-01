@@ -6,7 +6,7 @@ import 'package:psalmboek/providers.dart';
 
 class MainWidget extends StatelessWidget {
   final Color defaultColor;
-  const MainWidget({Key? key, required this.defaultColor}) : super(key: key);
+  const MainWidget({super.key, required this.defaultColor});
 
   @override
   Widget build(BuildContext context) {

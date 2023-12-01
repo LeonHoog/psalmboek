@@ -10,7 +10,7 @@ import 'package:psalmboek/shared_code/bookmarks_scanner.dart';
 
 ///Loads and decodes a JSON string from an asset, returning either a placeholder widget or the HomeScreen widget with the decoded data.
 class HomeScreensWrapper extends StatelessWidget {
-  const HomeScreensWrapper({Key? key}) : super(key: key);
+  const HomeScreensWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class HomeScreensWrapper extends StatelessWidget {
 ///HomeScreen widget
 class _HomeScreensWrapper extends StatefulWidget {
   final AsyncSnapshot<dynamic> snapshot;
-  const _HomeScreensWrapper({Key? key, required this.snapshot}) : super(key: key);
+  const _HomeScreensWrapper({required this.snapshot});
 
   @override
   State<_HomeScreensWrapper> createState() => _HomeScreensWrapperState();
@@ -183,7 +183,7 @@ class _FABLocation extends FloatingActionButtonLocation {
 
 ///HomeScreen widget shown when JSON asset is being loaded.
 class _HomeScreensWrapperPlaceholder extends StatelessWidget {
-  const _HomeScreensWrapperPlaceholder({Key? key}) : super(key: key);
+  const _HomeScreensWrapperPlaceholder();
 
   @override
   Widget build(BuildContext context) {

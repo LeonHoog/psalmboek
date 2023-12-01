@@ -6,7 +6,7 @@ import 'package:psalmboek/providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

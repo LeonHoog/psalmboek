@@ -9,7 +9,7 @@ class SongPageText extends StatelessWidget {
   final Map<String, dynamic> data;
   final AsyncSnapshot<dynamic> snapshot;
   final String? reference;
-  const SongPageText({Key? key, required this.data, required this.snapshot, this.reference}) : super(key: key);
+  const SongPageText({super.key, required this.data, required this.snapshot, this.reference});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class SongPageText extends StatelessWidget {
 
 class _SongPageBodyList extends StatelessWidget {
   final Map<String, dynamic> data;
-  const _SongPageBodyList({Key? key, required this.data}) : super(key: key);
+  const _SongPageBodyList({required this.data});
 
   @override
   Widget build(BuildContext context) {
