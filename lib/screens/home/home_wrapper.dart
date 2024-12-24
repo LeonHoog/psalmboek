@@ -72,14 +72,24 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.background,
+        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         floatingActionButton: (tabController.index == 0) ? FloatingActionButton.extended(
           onPressed: () {
             int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
             int value = (context.read<CounterStates>().count > maxVerse) ? maxVerse : context.read<CounterStates>().count;
-
-            context.read<DatabaseContentProvider>().getBsonAsset().then((data) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SongPageText(data: data[data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]][value - 1], snapshot: widget.snapshot,),),));
+            context.read<DatabaseContentProvider>().getBsonAsset().then(
+              (data) {
+                if (context.mounted) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        SongPageText(data: data[data["contents"][context
+                            .read<LocalStates>()
+                            .dataVersionInputType]["id"]][value - 1],
+                          snapshot: widget.snapshot,),),);
+                }
+              }
+            );
           },
           label: Icon(Icons.menu_book, color: context.watch<LocalStates>().colorScheme!.onTertiary,),
           tooltip: "openen",
@@ -88,7 +98,7 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
         appBar: AppBar(
           backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
           title: PopupMenuButton(
-            color: context.watch<LocalStates>().colorScheme!.surfaceVariant,
+            color: context.watch<LocalStates>().colorScheme!.surfaceContainerHighest,
             onSelected: (item) {
               context.read<LocalStates>().setDataVersionInput(item[0]);
               context.read<LocalStates>().setDataVersionInputType(item[1]);
@@ -190,7 +200,7 @@ class _HomeScreensWrapperPlaceholder extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.background,
+        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         appBar: AppBar(
           backgroundColor: context.watch<LocalStates>().colorScheme!.surface,

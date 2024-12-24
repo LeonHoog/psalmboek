@@ -25,10 +25,10 @@ class SongPageText extends StatelessWidget {
     return DefaultTabController(
       length: aantalVerzen,
       child: Scaffold(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.background,
+        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         appBar: AppBar(
           backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
-          title: Text((reference ?? snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"]) +" " + data["nr"].toString()),
+          title: Text((reference ?? snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"]) +" ${data["nr"].toString()}"),
         ),
         body: _SongPageBodyList(data: data),
       ),

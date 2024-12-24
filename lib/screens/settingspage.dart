@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.watch<LocalStates>().colorScheme!.background,
+      backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
       appBar: AppBar(
         backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         title: const Text('instellingen'),

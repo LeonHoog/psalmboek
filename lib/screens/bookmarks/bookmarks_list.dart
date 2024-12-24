@@ -48,13 +48,17 @@ class BookmarksList extends StatelessWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) =>
+                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) {
+                            if (context.mounted) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) =>
                                     SongPageText(
                                       data: songData[songData["contents"][bookmarks[index].contentType]["id"]][bookmarks[index].index],
                                       snapshot: snapshot,
-                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),));
+                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),
+                              );
+                            }
+                          });
                         },
                         backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
                         foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
