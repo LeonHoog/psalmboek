@@ -122,11 +122,26 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
       sublistBookmarks.clear();
     }
   }
-  return jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
+  // add web app URL in front of JSON
+  final String jsonData = jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
+  // ignore: prefer_interpolation_to_compose_strings
+  return "https://leonhoog.github.io/psalmboek/#" + jsonData;
 }
 
 List<BookmarksClass> createBookmarksListFromJson(String json) {
   List<BookmarksClass> returner = [];
+
+  // remove web app URL in front of JSON
+  List<String> readRawJson = json.split("#");
+  switch (readRawJson.length) {
+    case 1:
+      break;
+    case 2:
+      json = readRawJson[1];
+      break;
+    default:
+      throw(e){return;};
+  }
 
   List<dynamic> parsedJson = jsonDecode(json);
   List<_ShareBookmarkCategory> categories = parsedJson.map((e) => _ShareBookmarkCategory.fromJson(e as Map<String, dynamic>)).toList();

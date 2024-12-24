@@ -44,7 +44,7 @@ void _applyJson(BuildContext context, BarcodeCapture capture, bool clearBookmark
     readData = readData.substring(1);
   } catch (e) {}
 
-  if (breakingVersion! != breakingVersionShareQR) {
+  if (breakingVersion! > breakingVersionShareQR) {
     return;
   }
   
