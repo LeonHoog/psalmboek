@@ -21,6 +21,7 @@ class BookmarksList extends StatelessWidget {
     if (itemCount != 0) {
       return Scrollbar(
         child: ListView.builder(
+          key: UniqueKey(),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           itemCount: itemCount + 1,
           itemBuilder: (context, index) {
@@ -32,12 +33,11 @@ class BookmarksList extends StatelessWidget {
                   key: ValueKey(index),
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
-                //      dismissible: DismissiblePane(
-                //   onDismissed: () {
-                //     //TODO: PROBLEMATISCH
-                //     context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
-                //   },
-                // ),
+                     dismissible: DismissiblePane(
+                  onDismissed: () {
+                    context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                  },
+                ),
                     children: [
                       const Flexible(
                         flex: 1,
@@ -273,7 +273,7 @@ class _BlankCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Card(
-        color: context.watch<LocalStates>().colorScheme!.surface,
+        color: context.watch<LocalStates>().colorScheme!.surfaceContainerLow,
         elevation: 2,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: child,
