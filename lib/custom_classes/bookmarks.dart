@@ -131,18 +131,6 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
 List<BookmarksClass> createBookmarksListFromJson(String json) {
   List<BookmarksClass> returner = [];
 
-  // remove web app URL in front of JSON
-  List<String> readRawJson = json.split("#");
-  switch (readRawJson.length) {
-    case 1:
-      break;
-    case 2:
-      json = readRawJson[1];
-      break;
-    default:
-      throw(e){return;};
-  }
-
   List<dynamic> parsedJson = jsonDecode(json);
   List<_ShareBookmarkCategory> categories = parsedJson.map((e) => _ShareBookmarkCategory.fromJson(e as Map<String, dynamic>)).toList();
 
