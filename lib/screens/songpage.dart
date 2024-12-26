@@ -50,10 +50,14 @@ class _SongPageBodyList extends StatelessWidget {
       aantalVerzen += aantalVoorzangVerzen;
     } catch (e) {}
 
+    final scrollController = ScrollController();
+
     return RawScrollbar(
       thumbColor: context.watch<LocalStates>().colorScheme!.primary,
       radius: const Radius.circular(50),
+      controller: scrollController,
       child: ListView.builder(
+        controller: scrollController,
         itemCount: aantalVerzen,
         itemBuilder: (context, i) {
           return InkWell(

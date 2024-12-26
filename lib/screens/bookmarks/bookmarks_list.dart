@@ -18,9 +18,13 @@ class BookmarksList extends StatelessWidget {
     List<BookmarksClass> bookmarks = context.watch<SettingsData>().bookmarks ?? [];
     int itemCount = bookmarks.length;
 
+    final scrollController = ScrollController();
+
     if (itemCount != 0) {
       return Scrollbar(
+        controller: scrollController,
         child: ListView.builder(
+          controller: scrollController,
           key: UniqueKey(),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           itemCount: itemCount + 1,
