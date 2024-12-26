@@ -102,6 +102,13 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
             onSelected: (item) {
               context.read<LocalStates>().setDataVersionInput(item[0]);
               context.read<LocalStates>().setDataVersionInputType(item[1]);
+
+              // Prevent the counter from ever becoming larger than the number of verses
+              int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
+              if (context.read<CounterStates>().count > maxVerse) {
+                context.read<CounterStates>().setCounter(maxVerse);
+              }
+
               setState(() {});
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry> [
