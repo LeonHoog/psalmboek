@@ -122,7 +122,10 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
       sublistBookmarks.clear();
     }
   }
-  return jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
+  // add web app URL in front of JSON
+  final String jsonData = jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
+  // ignore: prefer_interpolation_to_compose_strings
+  return "https://leonhoog.github.io/psalmboek/#" + jsonData;
 }
 
 List<BookmarksClass> createBookmarksListFromJson(String json) {

@@ -36,25 +36,56 @@ void bookmarksScanner(BuildContext context, bool? clearBookmarks) {
 
 void _applyJson(BuildContext context, BarcodeCapture capture, bool clearBookmarks) {
   int? breakingVersion;
-  String? readData;
-  try {
-    final List<Barcode> barcodes = capture.barcodes;
-    readData = barcodes[0].rawValue!;
-    breakingVersion = int.parse(readData[0]);
-    readData = readData.substring(1);
-  } catch (e) {}
+  String readData = "";
+  final List<Barcode> barcodes = capture.barcodes;
 
-  if (breakingVersion! != breakingVersionShareQR) {
-    return;
+  while (barcodes.isNotEmpty && readData == "") {
+    // retrieve QR code data
+    readData = barcodes[0].rawValue!;
+    readData = convertScannedDataToJson(readData);
+
+    // check for breaking version
+    breakingVersion = int.parse(readData[0]);
+    if (breakingVersion > breakingVersionShareQR) {
+      barcodes.removeAt(0);
+      readData = "";
+      continue;
+    }
+
+    // read json
+    readData = readData.substring(1);
+    if (readData == "") {
+      barcodes.removeAt(0);
+      continue;
+    }
   }
-  
+
   if (clearBookmarks) {
     context.read<SettingsData>().clearBookmarks();
   }
   
-  List<BookmarksClass> bookmarks = createBookmarksListFromJson(readData!);
+  List<BookmarksClass> bookmarks = createBookmarksListFromJson(readData);
 
   for (BookmarksClass bookmark in bookmarks) {
     context.read<SettingsData>().addBookmarkToList(bookmark);
   }
+}
+
+String convertScannedDataToJson(String readData) {
+  String sanitizedJson = "";
+
+  // remove web app URL in front of JSON
+  List<String> readRawJson = readData.split("#");
+  switch (readRawJson.length) {
+    case 1:
+      sanitizedJson = readRawJson[1];
+      break;
+    case 2:
+      sanitizedJson = readRawJson[1];
+      break;
+    default:
+      throw(e){return;};
+  }
+
+  return sanitizedJson;
 }

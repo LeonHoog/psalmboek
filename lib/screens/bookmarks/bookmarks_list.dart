@@ -18,9 +18,14 @@ class BookmarksList extends StatelessWidget {
     List<BookmarksClass> bookmarks = context.watch<SettingsData>().bookmarks ?? [];
     int itemCount = bookmarks.length;
 
+    final scrollController = ScrollController();
+
     if (itemCount != 0) {
       return Scrollbar(
+        controller: scrollController,
         child: ListView.builder(
+          controller: scrollController,
+          key: UniqueKey(),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           itemCount: itemCount + 1,
           itemBuilder: (context, index) {
@@ -32,12 +37,11 @@ class BookmarksList extends StatelessWidget {
                   key: ValueKey(index),
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
-                //      dismissible: DismissiblePane(
-                //   onDismissed: () {
-                //     //TODO: PROBLEMATISCH
-                //     context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
-                //   },
-                // ),
+                     dismissible: DismissiblePane(
+                  onDismissed: () {
+                    context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                  },
+                ),
                     children: [
                       const Flexible(
                         flex: 1,
@@ -48,13 +52,17 @@ class BookmarksList extends StatelessWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) =>
+                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) {
+                            if (context.mounted) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) =>
                                     SongPageText(
                                       data: songData[songData["contents"][bookmarks[index].contentType]["id"]][bookmarks[index].index],
                                       snapshot: snapshot,
-                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),));
+                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),
+                              );
+                            }
+                          });
                         },
                         backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
                         foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
@@ -269,7 +277,7 @@ class _BlankCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Card(
-        color: context.watch<LocalStates>().colorScheme!.surface,
+        color: context.watch<LocalStates>().colorScheme!.surfaceContainerLow,
         elevation: 2,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: child,
