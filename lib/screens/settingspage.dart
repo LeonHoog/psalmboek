@@ -11,9 +11,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
       appBar: AppBar(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         title: const Text('instellingen'),
       ),
       body: ListView(
@@ -80,9 +78,6 @@ class SettingsPage extends StatelessWidget {
           ),
           SwitchListTile(
             title: const Text('dynamische tekstgrootte'),
-            activeColor: context.watch<LocalStates>().colorScheme!.primary,
-            inactiveTrackColor: context.watch<LocalStates>().colorScheme!.shadow,
-            inactiveThumbColor: context.watch<LocalStates>().colorScheme!.inversePrimary,
             value: context.watch<SettingsData>().autoTextSize,
             onChanged: (value) {
               context.read<SettingsData>().setAutoTextSize(value);

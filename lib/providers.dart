@@ -29,7 +29,6 @@ class LocalStates with ChangeNotifier {
   //VARIABLE NAMES:
   //  int dataVersionInput
   //  int dataVersionInputType
-  //  ColorScheme colorScheme
 
   int _dataVersionInput = 0;
   int get dataVersionInput => _dataVersionInput;
@@ -42,13 +41,6 @@ class LocalStates with ChangeNotifier {
   int get dataVersionInputType => _dataVersionInputType;
   void setDataVersionInputType(value) {
     _dataVersionInputType = value;
-    notifyListeners();
-  }
-
-  ColorScheme? _colorScheme;
-  ColorScheme? get colorScheme => _colorScheme;
-  void setColorScheme(value) {
-    _colorScheme = value;
     notifyListeners();
   }
 

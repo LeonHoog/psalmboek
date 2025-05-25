@@ -10,6 +10,7 @@ class HomeScreenMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     int maxVerse = snapshot.data[snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
     int value = (context.watch<CounterStates>().count > maxVerse) ? maxVerse : context.watch<CounterStates>().count;
     const int spinnerDuration = 1300;
@@ -31,14 +32,14 @@ class HomeScreenMobile extends StatelessWidget {
                     ? MediaQuery.of(context).size.height*.4
                     : MediaQuery.of(context).size.width*.4,
                 customColors:  CustomSliderColors(
-                  trackColor: context.watch<LocalStates>().colorScheme!.secondary,
+                  trackColor: colorScheme.secondary,
                   progressBarColors: [
-                    context.watch<LocalStates>().colorScheme!.tertiary,
-                    context.watch<LocalStates>().colorScheme!.secondary,
-                    context.watch<LocalStates>().colorScheme!.primary,
-                    context.watch<LocalStates>().colorScheme!.onSurface
+                    colorScheme.tertiary,
+                    colorScheme.secondary,
+                    colorScheme.primary,
+                    colorScheme.onSurface
                   ],
-                  shadowColor: context.watch<LocalStates>().colorScheme!.outline,
+                  shadowColor: colorScheme.outline,
                 ),
               ),
               onChange: (double value) {
@@ -104,10 +105,10 @@ class HomeScreenMobile extends StatelessWidget {
                   onPressed: () {
                     if (value > 1) context.read<CounterStates>().setCounter(value - 1);
                   },
-                  style: OutlinedButton.styleFrom(backgroundColor: context.watch<LocalStates>().colorScheme!.primary),
+                  style: OutlinedButton.styleFrom(),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_back, size: 25, color: context.watch<LocalStates>().colorScheme!.onPrimary,),
+                    child: Icon(Icons.arrow_back, size: 25,),
                   ),
                 ),
                 const SizedBox(width: 20,),
@@ -115,10 +116,9 @@ class HomeScreenMobile extends StatelessWidget {
                   onPressed: () {
                     if (value < maxVerse) context.read<CounterStates>().setCounter(value + 1);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: context.watch<LocalStates>().colorScheme!.primary),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_forward, size: 25, color: context.watch<LocalStates>().colorScheme!.onPrimary),
+                    child: Icon(Icons.arrow_forward, size: 25),
                   ),
                 ),
               ],

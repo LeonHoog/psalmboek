@@ -64,8 +64,6 @@ class BookmarksList extends StatelessWidget {
                             }
                           });
                         },
-                        backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
-                        foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.menu_book,
                         label: "Meer",
@@ -80,8 +78,6 @@ class BookmarksList extends StatelessWidget {
                         flex: 10,
                         onPressed: (BuildContext context) {context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
                         },
-                        backgroundColor: context.watch<LocalStates>().colorScheme!.secondary,
-                        foregroundColor: context.watch<LocalStates>().colorScheme!.onSecondary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.delete,
                         label: 'Wis',
@@ -135,7 +131,7 @@ class BookmarksList extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 10),
-                      child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
+                      child: Icon(Icons.qr_code),
                     ),
                     Text("bladwijzers scannen", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble())),
                   ],
@@ -224,9 +220,9 @@ class _CreateQRCodeCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 10),
-                    child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
+                    child: Icon(Icons.qr_code),
                   ),
-                  Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), color: context.watch<LocalStates>().colorScheme?.onSurface)),
+                  Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble())),
                 ],
               ),
         ),
@@ -277,7 +273,6 @@ class _BlankCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Card(
-        color: context.watch<LocalStates>().colorScheme!.surfaceContainerLow,
         elevation: 2,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: child,

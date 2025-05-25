@@ -72,7 +72,6 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         floatingActionButton: (tabController.index == 0) ? FloatingActionButton.extended(
           onPressed: () {
@@ -91,14 +90,11 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
               }
             );
           },
-          label: Icon(Icons.menu_book, color: context.watch<LocalStates>().colorScheme!.onTertiary,),
+          label: Icon(Icons.menu_book,),
           tooltip: "openen",
-          backgroundColor: context.watch<LocalStates>().colorScheme!.tertiary,
         ) : null,
         appBar: AppBar(
-          backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
           title: PopupMenuButton(
-            color: context.watch<LocalStates>().colorScheme!.surfaceContainerHighest,
             onSelected: (item) {
               context.read<LocalStates>().setDataVersionInput(item[0]);
               context.read<LocalStates>().setDataVersionInputType(item[1]);
@@ -158,10 +154,9 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
           bottom: TabBar(
             controller: tabController,
             tabs: [
-              Tab(icon: Icon(Icons.home, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
-              Tab(icon: Icon(Icons.list, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
+              Tab(icon: Icon(Icons.home),),
+              Tab(icon: Icon(Icons.list),),
             ],
-            indicatorColor: context.watch<LocalStates>().colorScheme!.primary,
           ),
         ),
         body: TabBarView(
@@ -207,10 +202,8 @@ class _HomeScreensWrapperPlaceholder extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
         appBar: AppBar(
-          backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
           title: CardLoading(
             width: MediaQuery.of(context).size.width*.4,
             height: 25,
@@ -227,10 +220,9 @@ class _HomeScreensWrapperPlaceholder extends StatelessWidget {
           ),],
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.home, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
-              Tab(icon: Icon(Icons.list, color: context.watch<LocalStates>().colorScheme?.onSurface,),),
+              Tab(icon: Icon(Icons.home),),
+              Tab(icon: Icon(Icons.list),),
             ],
-            indicatorColor: context.watch<LocalStates>().colorScheme!.primary,
           ),
         ),
       ),
