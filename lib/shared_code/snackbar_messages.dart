@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void snackBarBookmarkCreated(context) {
+void snackBarBookmarkCreated(BuildContext context) {
   const SnackBar snackBar = SnackBar(
     content: Text('bladwijzer toegevoegd'),
   );
@@ -8,7 +8,7 @@ void snackBarBookmarkCreated(context) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-void snackBarBookmarkDeleted(context) {
+void snackBarBookmarkDeleted(BuildContext context) {
   const SnackBar snackBar = SnackBar(
     content: Text('bladwijzer verwijderd'),
   );

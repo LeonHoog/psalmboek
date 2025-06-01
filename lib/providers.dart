@@ -1,65 +1,5 @@
-import 'dart:convert';
-import 'package:bson/bson.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'custom_classes/bookmarks.dart';
-
-class CounterStates with ChangeNotifier {
-  //VARIABLE NAMES:
-  //  int count
-  //  bool isAnimatingText
-
-  int _count = 100;
-  int get count => _count;
-  void setCounter(int value) {
-    _count = value;
-    notifyListeners();
-  }
-
-  bool _isAnimatingText = false;
-  bool get isAnimatingText => _isAnimatingText;
-  void setIsAnimatingText(bool value) {
-    _isAnimatingText = value;
-    notifyListeners();
-  }
-}
-
-class LocalStates with ChangeNotifier {
-  //VARIABLE NAMES:
-  //  int dataVersionInput
-  //  int dataVersionInputType
-
-  int _dataVersionInput = 0;
-  int get dataVersionInput => _dataVersionInput;
-  void setDataVersionInput(value) {
-    _dataVersionInput = value;
-    notifyListeners();
-  }
-
-  int _dataVersionInputType = 0;
-  int get dataVersionInputType => _dataVersionInputType;
-  void setDataVersionInputType(value) {
-    _dataVersionInputType = value;
-    notifyListeners();
-  }
-
-  void notifyLocalStatesListeners() {
-    notifyListeners();
-  }
-}
-
-class DatabaseContentProvider with ChangeNotifier {
-  String bsonAsset;
-  DatabaseContentProvider(this.bsonAsset);
-
-  Future getBsonAsset() async {
-    final ByteData bsonAsset = await rootBundle.load(this.bsonAsset);
-    final bsonBytes = bsonAsset.buffer.asUint8List();
-
-    return BsonCodec.deserialize(BsonBinary.from(bsonBytes));
-  }
-}
 
 class SettingsData with ChangeNotifier {
   //VARIABLE NAMES:
@@ -67,7 +7,6 @@ class SettingsData with ChangeNotifier {
   //  textSize
   //  fontFamily
   //  appThemeMode
-  //  bookmarksList
 
   Box box = Hive.box("settings");
 
@@ -105,47 +44,5 @@ class SettingsData with ChangeNotifier {
     _appThemeMode = value;
     notifyListeners();
     box.put('appThemeMode', value);
-  }
-
-
-  List<BookmarksClass>? _bookmarks;
-  List<BookmarksClass>? get bookmarks => _bookmarks;
-
-  getJsonBookmarks() {
-    String rawData = Hive.box('settings').get('bookmarks') ?? "{}";
-    if (Hive.box('settings').get('bookmarks') == null) {
-      rawData = "{}";
-    }
-    var jsonData = jsonDecode(rawData);
-    _bookmarks = [];
-    for (int i = 0; i < (jsonData?.length ?? 0); i++) {
-      _bookmarks?.add(BookmarksClass.fromJson(jsonData[i]));
-    }
-  }
-
-  saveJsonBookmarks() {
-    List<Map<String, dynamic>> jsonDataMap = [];
-    for (int i = 0; i < (_bookmarks?.length ?? 0); i++) {
-      jsonDataMap.add(_bookmarks![i].toJson());
-    }
-    Hive.box('settings').put('bookmarks', jsonEncode(jsonDataMap));
-  }
-
-  void addBookmarkToList(BookmarksClass value) {
-    _bookmarks!.add(value);
-    notifyListeners();
-    saveJsonBookmarks();
-  }
-
-  void removeBookmarkFromList(BookmarksClass value) {
-    _bookmarks!.remove(value);
-    notifyListeners();
-    saveJsonBookmarks();
-  }
-
-  void clearBookmarks() {
-    _bookmarks!.clear();
-    notifyListeners();
-    Hive.box('settings').put('bookmarks', "[]");
   }
 }

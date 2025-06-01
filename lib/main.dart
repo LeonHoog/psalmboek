@@ -11,8 +11,7 @@ import 'global_constants.dart';
 
 // ---- APP STRUCTURE ----
 // MAIN					            opens Hive database, initializes providers, returns MainWidget
-// HOMESCREENSWRAPPER       contains logic for loading bson, contains button that navigates to SongPageText, returns scaffold with HomeScreen and BookmarksList as body
-//     HOMESCREEN           screen with song selector, contains button that navigates to
+// HOMESCREEN           screen with song selector, contains button that navigates to
 //     BOOKMARKSLIST        screen of created bookmarks
 // SONGPAGE                 screen displaying a selected song
 
@@ -20,13 +19,8 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('settings');
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CounterStates()),
-        ChangeNotifierProvider(create: (_) => LocalStates()),
-        ChangeNotifierProvider(create: (_) => SettingsData()),
-        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.bson")),
-      ],
+    ChangeNotifierProvider(
+      create: (_) => SettingsData(),
       child: const Main(),
     ),
   );
@@ -42,7 +36,7 @@ class Main extends StatelessWidget {
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
       return MaterialApp(
         title: 'Psalmboek',
-        home: const HomeScreensWrapper(),
+        home: HomeScreen(),
 
         //APP THEME
         theme: ThemeData(

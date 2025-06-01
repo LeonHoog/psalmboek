@@ -1,150 +1,115 @@
+import 'dart:convert';
+
+import 'package:bilocator/bilocator.dart';
+import 'package:bson/bson.dart';
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:psalmboek/providers.dart';
+import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:mvvm_plus/mvvm_plus.dart';
+
 import 'package:psalmboek/screens/bookmarks/bookmarks_list.dart';
 import 'package:psalmboek/screens/home/home_screen.dart';
 import 'package:psalmboek/screens/settingspage.dart';
 import 'package:psalmboek/screens/songpage.dart';
-import 'package:psalmboek/shared_code/bookmarks_scanner.dart';
+import 'package:psalmboek/custom_classes/bookmarks.dart';
+import 'package:psalmboek/screens/bookmarks/bookmarks_scanner.dart';
 
-///Loads and decodes a JSON string from an asset, returning either a placeholder widget or the HomeScreen widget with the decoded data.
-class HomeScreensWrapper extends StatelessWidget {
-  const HomeScreensWrapper({super.key});
+class HomeScreen extends ViewWidget<HomeScreenViewModel> {
+  HomeScreen({super.key}) : super(
+    builder: () => HomeScreenViewModel(),
+    location: Location.registry,
+  );
+
+  @override
+  HomeScreenState createState() => HomeScreenState();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: context.read<DatabaseContentProvider>().getBsonAsset(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          context.read<SettingsData>().getJsonBookmarks();
-          return _HomeScreensWrapper(snapshot: snapshot);
-        } else {
-          return const _HomeScreensWrapperPlaceholder();
-        }
-      },
-    );
-  }
-}
-
-///HomeScreen widget
-class _HomeScreensWrapper extends StatefulWidget {
-  final AsyncSnapshot<dynamic> snapshot;
-  const _HomeScreensWrapper({required this.snapshot});
-
-  @override
-  State<_HomeScreensWrapper> createState() => _HomeScreensWrapperState();
-}
-
-class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerProviderStateMixin, WidgetsBindingObserver {
-  late TabController tabController;
-
-  void updateTabIndex() {
-    //updates the tab index, is required for the (dis)appearing FAB
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(
+    viewModel.tabController = TabController(
       initialIndex: 0,
       length: 2,
-      vsync: this,
+      vsync: getState<HomeScreenState>(),
     );
-    tabController.addListener(updateTabIndex);
-    WidgetsBinding.instance.addObserver(this);
-  }
 
-  @override
-  void didChangePlatformBrightness() {
-    //update app theme when platform detects change in theme brightness
-    if (context.watch<SettingsData>().appThemeMode == 2) {
-      context.read<SettingsData>().setAppThemeMode(2);
-      context.read<LocalStates>().notifyLocalStatesListeners();
-      setState(() {});
-    }
-  }
+    bool isDataLoaded = viewModel.bsonData.isNotEmpty;
 
-  @override
-  Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         floatingActionButtonLocation: _FABLocation(context: context, y: 160),
-        floatingActionButton: (tabController.index == 0) ? FloatingActionButton.extended(
+        floatingActionButton: (viewModel.tabController.index == 0) ? FloatingActionButton.extended(
           onPressed: () {
-            int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
-            int value = (context.read<CounterStates>().count > maxVerse) ? maxVerse : context.read<CounterStates>().count;
-            context.read<DatabaseContentProvider>().getBsonAsset().then(
-              (data) {
-                if (context.mounted) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        SongPageText(data: data[data["contents"][context
-                            .read<LocalStates>()
-                            .dataVersionInputType]["id"]][value - 1],
-                          snapshot: widget.snapshot,),),);
-                }
-              }
-            );
+            if (!isDataLoaded) return;
+            viewModel.updateMaxVerse(context);
+            // viewModel.setMaxVerse(viewModel.bsonData[viewModel.bsonData["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length);
+            int value = (viewModel.count > viewModel.maxVerse) ? viewModel.maxVerse : viewModel.count;
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  SongPageText(data: viewModel.bsonData[viewModel.bsonData["contents"][viewModel.dataVersionInputType]["id"]][value - 1],
+                    bsonData: viewModel.bsonData),),);
           },
-          label: Icon(Icons.menu_book,),
+          label: Icon(Icons.menu_book),
           tooltip: "openen",
         ) : null,
         appBar: AppBar(
-          title: PopupMenuButton(
-            onSelected: (item) {
-              context.read<LocalStates>().setDataVersionInput(item[0]);
-              context.read<LocalStates>().setDataVersionInputType(item[1]);
+          title:  isDataLoaded ?
+            PopupMenuButton(
+              onSelected: (item) {
+                viewModel.setDataVersionInput(item[0]);
+                viewModel.setDataVersionInputType(item[1]);
 
-              // Prevent the counter from ever becoming larger than the number of verses
-              int maxVerse = widget.snapshot.data[widget.snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
-              if (context.read<CounterStates>().count > maxVerse) {
-                context.read<CounterStates>().setCounter(maxVerse);
-              }
-
-              setState(() {});
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry> [
-              //TODO: DYNAMIC SONGBOOK IMPORTS
-              PopupMenuItem(
-                value: const [0, 0],
-                child: Text(widget.snapshot.data["contents"][0]["title"]),
-              ),
-              PopupMenuItem(
-                value: const [0, 1],
-                child: Row(
-                  children: [
-                    const Icon(Icons.subdirectory_arrow_right, size: 15,),
-                    Text(" ${widget.snapshot.data["contents"][1]["title"]}"),
-                  ],
+                viewModel.updateMaxVerse(context);
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry> [
+                //TODO: DYNAMIC SONGBOOK IMPORTS
+                PopupMenuItem(
+                  value: const [0, 0],
+                  child: Text(viewModel.bsonData["contents"][0]["title"]),
                 ),
-              ),
-            ],
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(widget.snapshot.data["contents"][context.watch<LocalStates>().dataVersionInputType]["title"]),
-                const Icon(Icons.arrow_drop_down),
+                PopupMenuItem(
+                  value: const [0, 1],
+                  child: Row(
+                    children: [
+                      const Icon(Icons.subdirectory_arrow_right, size: 15,),
+                      Text(" ${viewModel.bsonData["contents"][1]["title"]}"),
+                    ],
+                  ),
+                ),
               ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(viewModel.bsonData["contents"][viewModel.dataVersionInputType]["title"]),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
+            ) :
+            CardLoading(
+              width: MediaQuery.of(context).size.width*.4,
+              height: 25,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              cardLoadingTheme: const CardLoadingTheme(
+                colorOne: Colors.black45,
+                colorTwo: Colors.black38,
+              ),
             ),
-          ),
           actions:
           [
             IconButton(
               onPressed: () {
-                bookmarksScanner(context, false);
+                if (!isDataLoaded) return;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksScanner(clearBookmarks: false)));
               },
               icon: const Icon(Icons.qr_code_scanner),
             ),
             IconButton(
               onPressed: () {
+                if (!isDataLoaded) return;
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const SettingsPage(),
+                    builder: (context) => SettingsPage(),
                   ),
                 );
               },
@@ -152,32 +117,119 @@ class _HomeScreensWrapperState extends State<_HomeScreensWrapper> with TickerPro
             ),
           ],
           bottom: TabBar(
-            controller: tabController,
+            controller: viewModel.tabController,
             tabs: [
-              Tab(icon: Icon(Icons.home),),
-              Tab(icon: Icon(Icons.list),),
+              Tab(icon: Icon(Icons.home)),
+              Tab(icon: Icon(Icons.list)),
             ],
           ),
         ),
         body: TabBarView(
-          controller: tabController,
+          controller: viewModel.tabController,
           children: [
-            HomeScreenMobile(snapshot: widget.snapshot),
-            BookmarksList(snapshot: widget.snapshot),
+            HomeScreenMobile(bsonData: viewModel.bsonData),
+            BookmarksList(bsonData: viewModel.bsonData, dataVersionInputType: viewModel.dataVersionInputType),
           ],
         ),
       ),
     );
   }
+}
 
+class HomeScreenViewModel extends ViewModel {
+  String bsonAsset = "lib/data/psalmboek1773.bson";
+  Map<String, dynamic> bsonData = {};
+
+  int dataVersionInput = 0;
+  void setDataVersionInput(int value) {
+    dataVersionInput = value;
+    buildView();
+  }
+
+  int dataVersionInputType = 0;
+  void setDataVersionInputType(int value) {
+    dataVersionInputType = value;
+    buildView();
+  }
+
+  int maxVerse = 1;
+  void updateMaxVerse(BuildContext context) {
+    maxVerse = bsonData[bsonData["contents"][dataVersionInputType]["id"]].length;
+    if (count > maxVerse) setCounter(maxVerse);
+    buildView();
+  }
+
+  int count = 1;
+  void setCounter(int value) {
+    count = (count > maxVerse) ? maxVerse : value;
+  }
+
+  Future getBsonAsset() async {
+    final ByteData bsonAsset = await rootBundle.load(this.bsonAsset);
+    final bsonBytes = bsonAsset.buffer.asUint8List();
+
+    bsonData = BsonCodec.deserialize(BsonBinary.from(bsonBytes));
+
+    if (context.mounted) updateMaxVerse(context);
+
+    buildView();
+    return bsonData;
+  }
+
+  late List<BookmarksClass> bookmarks = getJsonBookmarks();
+  List<BookmarksClass> getJsonBookmarks() {
+    List<BookmarksClass> _bookmarks = [];
+    String rawData = Hive.box('settings').get('bookmarks') ?? "{}";
+    if (Hive.box('settings').get('bookmarks') == null) {
+      return [];
+    }
+    var jsonData = jsonDecode(rawData);
+    for (int i = 0; i < (jsonData!.length ?? 0); i++) {
+      _bookmarks.add(BookmarksClass.fromJson(jsonData[i]));
+    }
+    return _bookmarks;
+  }
+
+  void saveJsonBookmarks() async {
+    List<Map<String, dynamic>> jsonDataMap = [];
+    for (int i = 0; i < (bookmarks.length); i++) {
+      jsonDataMap.add(bookmarks[i].toJson());
+    }
+    await Hive.box('settings').put('bookmarks', jsonEncode(jsonDataMap));
+  }
+
+  void addBookmarkToList(BookmarksClass value) {
+    bookmarks.add(value);
+    saveJsonBookmarks();
+    buildView();
+  }
+
+  void removeBookmarkFromList(BookmarksClass value) {
+    bookmarks.remove(value);
+    saveJsonBookmarks();
+    buildView();
+  }
+
+  void clearBookmarks() {
+    bookmarks.clear();
+    Hive.box('settings').put('bookmarks', "[]");
+    buildView();
+  }
+
+  int tabIndex = 0;
+  late TabController tabController;
+}
+
+class HomeScreenState extends ViewState<HomeScreenViewModel>
+    with TickerProviderStateMixin {
   @override
-  void dispose() {
-    tabController.dispose();
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
+  void initState() {
+    super.initState();
+    widget.viewModel.getBsonAsset();
   }
 }
 
+///HomeScreen widget
 class _FABLocation extends FloatingActionButtonLocation {
   final BuildContext context;
   final double y;
@@ -189,43 +241,6 @@ class _FABLocation extends FloatingActionButtonLocation {
     return Offset(
       (scaffoldGeometry.scaffoldSize.width - scaffoldGeometry.floatingActionButtonSize.width) / 2.0,
       MediaQuery.of(context).size.height - y,
-    );
-  }
-}
-
-///HomeScreen widget shown when JSON asset is being loaded.
-class _HomeScreensWrapperPlaceholder extends StatelessWidget {
-  const _HomeScreensWrapperPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        floatingActionButtonLocation: _FABLocation(context: context, y: 160),
-        appBar: AppBar(
-          title: CardLoading(
-            width: MediaQuery.of(context).size.width*.4,
-            height: 25,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            cardLoadingTheme: const CardLoadingTheme(
-              colorOne: Colors.black45,
-              colorTwo: Colors.black38,
-            ),
-          ),
-          actions: const [
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Icon(Icons.settings),
-          ),],
-          bottom: TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.home),),
-              Tab(icon: Icon(Icons.list),),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

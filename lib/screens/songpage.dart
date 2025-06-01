@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:provider/provider.dart';
+
 import 'package:psalmboek/custom_classes/bookmarks.dart';
 import 'package:psalmboek/providers.dart';
+import 'package:psalmboek/screens/home/home_wrapper.dart';
 import 'package:psalmboek/shared_code/snackbar_messages.dart';
 import 'package:psalmboek/shared_code/songtext.dart';
 
-class SongPageText extends StatelessWidget {
+class SongPageText extends StatelessViewWidget {
   final Map<String, dynamic> data;
-  final AsyncSnapshot<dynamic> snapshot;
+  final Map<String, dynamic> bsonData;
   final String? reference;
-  const SongPageText({super.key, required this.data, required this.snapshot, this.reference});
+  SongPageText({super.key, required this.data, required this.bsonData, this.reference});
 
   @override
   Widget build(BuildContext context) {
+    final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
 
     int aantalVerzen = data["verzen"].length;
     int aantalVoorzangVerzen = 0;
@@ -26,20 +30,23 @@ class SongPageText extends StatelessWidget {
       length: aantalVerzen,
       child: Scaffold(
         appBar: AppBar(
-          title: Text((reference ?? snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["reference"]) +" ${data["nr"].toString()}"),
+          title: Text((reference ?? bsonData["contents"][homeScreenViewModel.dataVersionInputType]["reference"]) +" ${data["nr"].toString()}"),
         ),
-        body: _SongPageBodyList(data: data),
+        body: _SongPageBodyList(data: data, dataVersionInputType: homeScreenViewModel.dataVersionInputType,),
       ),
     );
   }
 }
 
-class _SongPageBodyList extends StatelessWidget {
+class _SongPageBodyList extends StatelessViewWidget {
   final Map<String, dynamic> data;
-  const _SongPageBodyList({required this.data});
+  final int dataVersionInputType;
+  _SongPageBodyList({required this.data, required this.dataVersionInputType});
 
   @override
   Widget build(BuildContext context) {
+    final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
+
     int aantalVerzen = data["verzen"].length;
     int aantalVoorzangVerzen = 0;
     // CHECK FOR PRELUDE
@@ -61,17 +68,17 @@ class _SongPageBodyList extends StatelessWidget {
             onLongPress: () {
               // ADD BOOKMARK: VERSE
               if (i < aantalVoorzangVerzen) {
-                BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: -(i+1));
-                if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
-                  context.read<SettingsData>().addBookmarkToList(bookmark);
+                BookmarksClass bookmark = BookmarksClass(jsonAsset: "lib/data/psalmboek1773.bson", contentType: dataVersionInputType.toInt(), index: data["nr"]-1, verse: -(i+1));
+                if (!homeScreenViewModel.bookmarks.contains(bookmark)) {
+                  homeScreenViewModel.addBookmarkToList(bookmark);
                 }
               }
 
               // ADD BOOKMARK: PRELUDE
               else {
-                 BookmarksClass bookmark = BookmarksClass(jsonAsset: context.read<DatabaseContentProvider>().bsonAsset, contentType: context.read<LocalStates>().dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
-                if (!context.read<SettingsData>().bookmarks!.contains(bookmark)) {
-                  context.read<SettingsData>().addBookmarkToList(bookmark);
+                 BookmarksClass bookmark = BookmarksClass(jsonAsset: "lib/data/psalmboek1773.bson", contentType: dataVersionInputType.toInt(), index: data["nr"]-1, verse: i+1);
+                if (!homeScreenViewModel.bookmarks.contains(bookmark)) {
+                  homeScreenViewModel.addBookmarkToList(bookmark);
                 }
               }
 
