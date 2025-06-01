@@ -207,7 +207,6 @@ class HomeScreenViewModel extends ViewModel {
   void removeBookmarkFromList(BookmarksClass value) {
     bookmarks.remove(value);
     saveJsonBookmarks();
-    buildView();
   }
 
   void clearBookmarks() {

@@ -13,10 +13,12 @@ import 'package:psalmboek/screens/home/home_wrapper.dart';
 
 import 'bookmarks_scanner.dart';
 
-class BookmarksList extends StatelessViewWidget {
+class BookmarksList extends ViewWidget<BookmarksListViewModel> {
   final Map<String, dynamic> bsonData;
   final int dataVersionInputType;
-  BookmarksList({super.key, required this.bsonData, required this.dataVersionInputType});
+  BookmarksList({super.key, required this.bsonData, required this.dataVersionInputType}) : super(
+    builder: () => BookmarksListViewModel(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,11 @@ class BookmarksList extends StatelessViewWidget {
     int itemCount = homeScreenViewModel.bookmarks.length;
 
     final scrollController = ScrollController();
+
+    void removeBookmark(int index) {
+      homeScreenViewModel.removeBookmarkFromList(homeScreenViewModel.bookmarks[index]);
+      viewModel.updateView();
+    }
 
     if (itemCount != 0) {
       return Scrollbar(
@@ -44,7 +51,7 @@ class BookmarksList extends StatelessViewWidget {
                     motion: const ScrollMotion(),
                      dismissible: DismissiblePane(
                   onDismissed: () {
-                    homeScreenViewModel.removeBookmarkFromList(homeScreenViewModel.bookmarks[index]);
+                    removeBookmark(index);
                   },
                 ),
                     children: [
@@ -78,7 +85,7 @@ class BookmarksList extends StatelessViewWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          homeScreenViewModel.removeBookmarkFromList(homeScreenViewModel.bookmarks[index]);
+                          removeBookmark(index);
                         },
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.delete,
@@ -144,6 +151,12 @@ class BookmarksList extends StatelessViewWidget {
         ],
       );
     }
+  }
+}
+
+class BookmarksListViewModel extends ViewModel {
+  void updateView() {
+    buildView();
   }
 }
 
