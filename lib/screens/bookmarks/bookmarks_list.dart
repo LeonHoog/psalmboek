@@ -4,11 +4,11 @@ import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:psalmboek/custom_classes/bookmarks.dart';
-import 'package:psalmboek/global_constants.dart';
+import 'package:psalmboek/core/constants/constants.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/songpage.dart';
-import 'package:psalmboek/shared_code/songtext.dart';
+import 'package:psalmboek/core/models/bookmarks.dart';
+import 'package:psalmboek/core/widgets/song_text.dart';
 import 'package:psalmboek/screens/home/home_wrapper.dart';
 
 import 'bookmarks_scanner.dart';

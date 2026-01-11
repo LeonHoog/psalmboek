@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mvvm_plus/mvvm_plus.dart';
 
-import 'package:psalmboek/custom_classes/bookmarks.dart';
-import 'package:psalmboek/global_constants.dart';
+import 'package:psalmboek/core/constants/constants.dart';
+import 'package:psalmboek/core/models/bookmarks.dart';
 import 'package:psalmboek/screens/home/home_wrapper.dart';
 
 class BookmarksScanner extends ViewWidget<BookmarksScannerViewModel> {

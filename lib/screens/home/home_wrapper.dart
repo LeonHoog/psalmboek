@@ -12,7 +12,7 @@ import 'package:psalmboek/screens/bookmarks/bookmarks_list.dart';
 import 'package:psalmboek/screens/home/home_screen.dart';
 import 'package:psalmboek/screens/settingspage.dart';
 import 'package:psalmboek/screens/songpage.dart';
-import 'package:psalmboek/custom_classes/bookmarks.dart';
+import 'package:psalmboek/core/models/bookmarks.dart';
 import 'package:psalmboek/screens/bookmarks/bookmarks_scanner.dart';
 
 class HomeScreen extends ViewWidget<HomeScreenViewModel> {
@@ -26,111 +26,100 @@ class HomeScreen extends ViewWidget<HomeScreenViewModel> {
 
   @override
   Widget build(BuildContext context) {
-    viewModel.tabController = TabController(
-      initialIndex: 0,
-      length: 2,
-      vsync: getState<HomeScreenState>(),
-    );
-
     bool isDataLoaded = viewModel.bsonData.isNotEmpty;
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        floatingActionButtonLocation: _FABLocation(context: context, y: 160),
-        floatingActionButton: (viewModel.tabController.index == 0) ? FloatingActionButton.extended(
-          onPressed: () {
-            if (!isDataLoaded) return;
-            viewModel.updateMaxVerse(context);
-            // viewModel.setMaxVerse(viewModel.bsonData[viewModel.bsonData["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length);
-            int value = (viewModel.count > viewModel.maxVerse) ? viewModel.maxVerse : viewModel.count;
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  SongPageText(data: viewModel.bsonData[viewModel.bsonData["contents"][viewModel.dataVersionInputType]["id"]][value - 1],
-                    bsonData: viewModel.bsonData),),);
-          },
-          label: Icon(Icons.menu_book),
-          tooltip: "openen",
-        ) : null,
-        appBar: AppBar(
-          title:  isDataLoaded ?
-            PopupMenuButton(
-              onSelected: (item) {
-                viewModel.setDataVersionInput(item[0]);
-                viewModel.setDataVersionInputType(item[1]);
+    return Scaffold(
+      floatingActionButtonLocation: _FABLocation(context: context, y: 160),
+      floatingActionButton: (viewModel.tabController.index == 0) ? FloatingActionButton.extended(
+        onPressed: () {
+          if (!isDataLoaded) return;
+          viewModel.updateMaxVerse(context);
+          int value = (viewModel.count > viewModel.maxVerse) ? viewModel.maxVerse : viewModel.count;
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                SongPageText(data: viewModel.bsonData[viewModel.bsonData["contents"][viewModel.dataVersionInputType]["id"]][value - 1],
+                  bsonData: viewModel.bsonData),),);
+        },
+        label: const Icon(Icons.menu_book),
+        tooltip: "openen",
+      ) : null,
+      appBar: AppBar(
+        title:  isDataLoaded ?
+          PopupMenuButton(
+            onSelected: (item) {
+              viewModel.setDataVersionInput(item[0]);
+              viewModel.setDataVersionInputType(item[1]);
 
-                viewModel.updateMaxVerse(context);
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry> [
-                //TODO: DYNAMIC SONGBOOK IMPORTS
-                PopupMenuItem(
-                  value: const [0, 0],
-                  child: Text(viewModel.bsonData["contents"][0]["title"]),
-                ),
-                PopupMenuItem(
-                  value: const [0, 1],
-                  child: Row(
-                    children: [
-                      const Icon(Icons.subdirectory_arrow_right, size: 15,),
-                      Text(" ${viewModel.bsonData["contents"][1]["title"]}"),
-                    ],
-                  ),
-                ),
-              ],
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(viewModel.bsonData["contents"][viewModel.dataVersionInputType]["title"]),
-                  const Icon(Icons.arrow_drop_down),
-                ],
+              viewModel.updateMaxVerse(context);
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry> [
+              PopupMenuItem(
+                value: const [0, 0],
+                child: Text(viewModel.bsonData["contents"][0]["title"]),
               ),
-            ) :
-            CardLoading(
-              width: MediaQuery.of(context).size.width*.4,
-              height: 25,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              cardLoadingTheme: const CardLoadingTheme(
-                colorOne: Colors.black45,
-                colorTwo: Colors.black38,
+              PopupMenuItem(
+                value: const [0, 1],
+                child: Row(
+                  children: [
+                    const Icon(Icons.subdirectory_arrow_right, size: 15,),
+                    Text(" ${viewModel.bsonData["contents"][1]["title"]}"),
+                  ],
+                ),
               ),
-            ),
-          actions:
-          [
-            IconButton(
-              onPressed: () {
-                if (!isDataLoaded) return;
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksScanner(clearBookmarks: false)));
-              },
-              icon: const Icon(Icons.qr_code_scanner),
-            ),
-            IconButton(
-              onPressed: () {
-                if (!isDataLoaded) return;
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPage(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.settings),
-            ),
-          ],
-          bottom: TabBar(
-            controller: viewModel.tabController,
-            tabs: [
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.list)),
             ],
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(viewModel.bsonData["contents"][viewModel.dataVersionInputType]["title"]),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ) :
+          CardLoading(
+            width: MediaQuery.of(context).size.width*.4,
+            height: 25,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            cardLoadingTheme: const CardLoadingTheme(
+              colorOne: Colors.black45,
+              colorTwo: Colors.black38,
+            ),
           ),
-        ),
-        body: TabBarView(
+        actions:
+        [
+          IconButton(
+            onPressed: () {
+              if (!isDataLoaded) return;
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksScanner(clearBookmarks: false)));
+            },
+            icon: const Icon(Icons.qr_code_scanner),
+          ),
+          IconButton(
+            onPressed: () {
+              if (!isDataLoaded) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
+        bottom: TabBar(
           controller: viewModel.tabController,
-          children: [
-            HomeScreenMobile(bsonData: viewModel.bsonData),
-            BookmarksList(bsonData: viewModel.bsonData, dataVersionInputType: viewModel.dataVersionInputType),
+          tabs: const [
+            Tab(icon: Icon(Icons.home)),
+            Tab(icon: Icon(Icons.list)),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: viewModel.tabController,
+        children: [
+          HomeScreenMobile(bsonData: viewModel.bsonData),
+          BookmarksList(bsonData: viewModel.bsonData, dataVersionInputType: viewModel.dataVersionInputType),
+        ],
       ),
     );
   }
@@ -215,8 +204,22 @@ class HomeScreenViewModel extends ViewModel {
     buildView();
   }
 
-  int tabIndex = 0;
   late TabController tabController;
+
+  void initTabController(TickerProvider vsync) {
+    tabController = TabController(length: 2, vsync: vsync);
+    tabController.addListener(() {
+      if (!tabController.indexIsChanging) {
+        buildView(); // Trigger rebuild when tab changes
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
 }
 
 class HomeScreenState extends ViewState<HomeScreenViewModel>
@@ -225,6 +228,7 @@ class HomeScreenState extends ViewState<HomeScreenViewModel>
   void initState() {
     super.initState();
     widget.viewModel.getBsonAsset();
+    widget.viewModel.initTabController(this);
   }
 }
 

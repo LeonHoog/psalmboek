@@ -5,15 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:psalmboek/screens/home/home_wrapper.dart';
-import 'package:psalmboek/shared_code/create_material_color.dart';
-
-import 'global_constants.dart';
-
-// ---- APP STRUCTURE ----
-// MAIN					            opens Hive database, initializes providers, returns MainWidget
-// HOMESCREEN           screen with song selector, contains button that navigates to
-//     BOOKMARKSLIST        screen of created bookmarks
-// SONGPAGE                 screen displaying a selected song
+import 'package:psalmboek/core/constants/constants.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -27,33 +19,43 @@ void main() async {
 }
 
 class Main extends StatelessWidget {
-  static final _defaultLightColorScheme = ColorScheme.fromSwatch(primarySwatch: createMaterialColor(Color(defaultColorHexValue)));
-  static final _defaultDarkColorScheme = ColorScheme.fromSwatch(primarySwatch: createMaterialColor(Color(defaultColorHexValue)), brightness: Brightness.dark);
   const Main({super.key});
 
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+      final settings = context.watch<SettingsData>();
+      final seedColor = Color(defaultColorHexValue);
+      final themeMode = switch (settings.appThemeMode) {
+        0 => ThemeMode.dark,
+        1 => ThemeMode.light,
+        _ => ThemeMode.system,
+      };
+
+      final defaultLightColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.light,
+      );
+      final defaultDarkColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.dark,
+      );
+
       return MaterialApp(
         title: 'Psalmboek',
         home: HomeScreen(),
 
         //APP THEME
         theme: ThemeData(
-            colorScheme: lightColorScheme ?? _defaultLightColorScheme,
-            brightness: Brightness.light,
-            fontFamily: context.watch<SettingsData>().fontFamily
+            colorScheme: lightColorScheme ?? defaultLightColorScheme,
+            fontFamily: settings.fontFamily,
         ),
         darkTheme: ThemeData(
-            colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
-            brightness: Brightness.dark,
-            fontFamily: context.watch<SettingsData>().fontFamily
+          colorScheme: darkColorScheme ?? defaultDarkColorScheme,
+          brightness: Brightness.dark,
+          fontFamily: context.watch<SettingsData>().fontFamily
         ),
-        themeMode: (context.watch<SettingsData>().appThemeMode == 0)
-            ? ThemeMode.dark
-              : (context.watch<SettingsData>().appThemeMode == 1)
-                ? ThemeMode.light
-                  : ThemeMode.system,
+        themeMode: themeMode,
 
         //TRANSLATIONS
         supportedLocales: const [

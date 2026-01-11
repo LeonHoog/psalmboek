@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:convert';
-import 'package:psalmboek/global_constants.dart';
+import 'package:psalmboek/core/constants/constants.dart';
 
 class BookmarksClass {
   String? jsonAsset;
@@ -40,8 +40,6 @@ class BookmarksClass {
     };
   }
 }
-
-//////////////////////////////////////////////////////////////////////
 
 class _ShareBookmarkCategory {
   String? jsonAsset;
@@ -94,7 +92,6 @@ class _ShareBookmarkItem {
   }
 }
 
-//////////////////////////////////////////////////////////////////////
 String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
   List<_ShareBookmarkCategory> returner = [];
 
@@ -122,10 +119,8 @@ String createSharableBookmarksJson(List<BookmarksClass> bookmarks) {
       sublistBookmarks.clear();
     }
   }
-  // add web app URL in front of JSON
   final String jsonData = jsonEncode(breakingVersionShareQR) + jsonEncode(returner);
-  // ignore: prefer_interpolation_to_compose_strings
-  return "https://leonhoog.github.io/psalmboek/#" + jsonData;
+  return "https://leonhoog.github.io/psalmboek/#$jsonData";
 }
 
 List<BookmarksClass> createBookmarksListFromJson(String json) {
