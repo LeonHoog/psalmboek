@@ -1,24 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:psalmboek/custom_classes/bookmarks.dart';
-import 'package:psalmboek/global_constants.dart';
-import 'package:psalmboek/providers.dart';
-import 'package:psalmboek/screens/songpage.dart';
-import 'package:psalmboek/shared_code/bookmarks_scanner.dart';
-import 'package:psalmboek/shared_code/songtext.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class BookmarksList extends StatelessWidget {
-  final AsyncSnapshot<dynamic> snapshot;
-  const BookmarksList({super.key, required this.snapshot});
+import 'package:psalmboek/core/constants/constants.dart';
+import 'package:psalmboek/providers.dart';
+import 'package:psalmboek/screens/songpage.dart';
+import 'package:psalmboek/core/models/bookmarks.dart';
+import 'package:psalmboek/core/widgets/song_text.dart';
+import 'package:psalmboek/screens/home/home_wrapper.dart';
+
+import 'bookmarks_scanner.dart';
+
+class BookmarksList extends ViewWidget<BookmarksListViewModel> {
+  final Map<String, dynamic> bsonData;
+  final int dataVersionInputType;
+  BookmarksList({super.key, required this.bsonData, required this.dataVersionInputType}) : super(
+    builder: () => BookmarksListViewModel(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    List<BookmarksClass> bookmarks = context.watch<SettingsData>().bookmarks ?? [];
-    int itemCount = bookmarks.length;
+    final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
+    int itemCount = homeScreenViewModel.bookmarks.length;
 
     final scrollController = ScrollController();
+
+    void removeBookmark(int index) {
+      homeScreenViewModel.removeBookmarkFromList(homeScreenViewModel.bookmarks[index]);
+      viewModel.updateView();
+    }
 
     if (itemCount != 0) {
       return Scrollbar(
@@ -39,7 +51,7 @@ class BookmarksList extends StatelessWidget {
                     motion: const ScrollMotion(),
                      dismissible: DismissiblePane(
                   onDismissed: () {
-                    context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                    removeBookmark(index);
                   },
                 ),
                     children: [
@@ -52,20 +64,14 @@ class BookmarksList extends StatelessWidget {
                       SlidableAction(
                         flex: 10,
                         onPressed: (BuildContext context) {
-                          context.read<DatabaseContentProvider>().getBsonAsset().then((songData) {
-                            if (context.mounted) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) =>
-                                    SongPageText(
-                                      data: songData[songData["contents"][bookmarks[index].contentType]["id"]][bookmarks[index].index],
-                                      snapshot: snapshot,
-                                      reference: snapshot.data["contents"][bookmarks[index].contentType]["reference"],),),
-                              );
-                            }
-                          });
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => SongPageText(
+                              data: homeScreenViewModel.bsonData[homeScreenViewModel.bsonData["contents"][homeScreenViewModel.bookmarks[index].contentType]["id"]][homeScreenViewModel.bookmarks[index].index],
+                              bsonData: homeScreenViewModel.bsonData,
+                              reference: homeScreenViewModel.bsonData["contents"][homeScreenViewModel.bookmarks[index].contentType]["reference"],
+                            ),),
+                          );
                         },
-                        backgroundColor: context.watch<LocalStates>().colorScheme!.primary,
-                        foregroundColor: context.watch<LocalStates>().colorScheme!.onPrimary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.menu_book,
                         label: "Meer",
@@ -78,10 +84,9 @@ class BookmarksList extends StatelessWidget {
                       ),
                       SlidableAction(
                         flex: 10,
-                        onPressed: (BuildContext context) {context.read<SettingsData>().removeBookmarkFromList(bookmarks[index]);
+                        onPressed: (BuildContext context) {
+                          removeBookmark(index);
                         },
-                        backgroundColor: context.watch<LocalStates>().colorScheme!.secondary,
-                        foregroundColor: context.watch<LocalStates>().colorScheme!.onSecondary,
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.delete,
                         label: 'Wis',
@@ -95,8 +100,8 @@ class BookmarksList extends StatelessWidget {
                     ],
                   ),
                   child: _BookmarkCard(
-                    snapshot: snapshot,
-                    data: bookmarks[index],
+                    bsonData: bsonData,
+                    data: homeScreenViewModel.bookmarks[index],
                   ),
                 ),
               );
@@ -105,7 +110,7 @@ class BookmarksList extends StatelessWidget {
               if (itemCount <= 100) {
                 // CHECK WHETHER QR CODE CAN BE GENERATED
                 return _CreateQRCodeCard(
-                  bookmarks: bookmarks,
+                  bookmarks: homeScreenViewModel.bookmarks,
                   shareVersionQR: breakingVersionShareQR,
                 );
               }
@@ -126,7 +131,7 @@ class BookmarksList extends StatelessWidget {
             child: _BlankCard(
               child: InkWell(
               onTap: () {
-                bookmarksScanner(context, true);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarksScanner(clearBookmarks: true)));
               },
               child: SizedBox(
                 height: 60,
@@ -135,7 +140,7 @@ class BookmarksList extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 10),
-                      child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
+                      child: Icon(Icons.qr_code),
                     ),
                     Text("bladwijzers scannen", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble())),
                   ],
@@ -146,6 +151,12 @@ class BookmarksList extends StatelessWidget {
         ],
       );
     }
+  }
+}
+
+class BookmarksListViewModel extends ViewModel {
+  void updateView() {
+    buildView();
   }
 }
 
@@ -224,9 +235,9 @@ class _CreateQRCodeCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 10),
-                    child: Icon(Icons.qr_code, color: context.watch<LocalStates>().colorScheme?.onSurface),
+                    child: Icon(Icons.qr_code),
                   ),
-                  Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), color: context.watch<LocalStates>().colorScheme?.onSurface)),
+                  Text("QR-code maken", style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble())),
                 ],
               ),
         ),
@@ -236,10 +247,10 @@ class _CreateQRCodeCard extends StatelessWidget {
 }
 
 class _BookmarkCard extends StatelessWidget {
-  final AsyncSnapshot<dynamic> snapshot;
+  final Map<String, dynamic> bsonData;
   final BookmarksClass data;
 
-  const _BookmarkCard({required this.snapshot, required this.data});
+  const _BookmarkCard({required this.bsonData, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -250,14 +261,14 @@ class _BookmarkCard extends StatelessWidget {
         children: [
           const SizedBox(height: 4,),
           Text(
-            "${snapshot.data["contents"][data.contentType]["reference"]} ${data.index! + 1}: ${data.verse}",
+            "${bsonData["contents"][data.contentType]["reference"]} ${data.index! + 1}: ${data.verse}",
             style: TextStyle(fontSize: context.read<SettingsData>().textSize.toDouble(), fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SongText(
-                data: snapshot.data[snapshot.data["contents"][data.contentType]["id"]][data.index!],
+                data: bsonData[bsonData["contents"][data.contentType]["id"]][data.index!],
                 verse: (data.verse!)-1
             ),
           ),
@@ -277,7 +288,6 @@ class _BlankCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Card(
-        color: context.watch<LocalStates>().colorScheme!.surfaceContainerLow,
         elevation: 2,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: child,

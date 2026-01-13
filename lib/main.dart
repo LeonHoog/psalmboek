@@ -1,30 +1,18 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:psalmboek/main_widget/main_widget.dart';
-import 'package:psalmboek/main_widget/main_widget_base.dart';
 import 'package:psalmboek/providers.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-// ---- APP STRUCTURE ----
-// MAIN					            opens Hive database, initializes providers, returns MainWidget
-// MAIN_WIDGET			        sets colors/themes, returns MaterialApp with HomeScreensWrapper as its home
-// HOMESCREENSWRAPPER       contains logic for loading bson, contains button that navigates to SongPageText, returns scaffold with HomeScreen and BookmarksList as body
-//     HOMESCREEN           screen with song selector, contains button that navigates to
-//     BOOKMARKSLIST        screen of created bookmarks
-// SONGPAGE                 screen displaying a selected song
+import 'package:psalmboek/screens/home/home_wrapper.dart';
+import 'package:psalmboek/core/constants/constants.dart';
 
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox('settings');
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CounterStates()),
-        ChangeNotifierProvider(create: (_) => LocalStates()),
-        ChangeNotifierProvider(create: (_) => SettingsData()),
-        ChangeNotifierProvider(create: (_) => DatabaseContentProvider("lib/data/psalmboek1773.bson")),
-      ],
+    ChangeNotifierProvider(
+      create: (_) => SettingsData(),
       child: const Main(),
     ),
   );
@@ -35,15 +23,49 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const defaultColor = Color(0xFF6B008D);
+    return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+      final settings = context.watch<SettingsData>();
+      final seedColor = Color(defaultColorHexValue);
+      final themeMode = switch (settings.appThemeMode) {
+        0 => ThemeMode.dark,
+        1 => ThemeMode.light,
+        _ => ThemeMode.system,
+      };
 
-    if (!kIsWeb) {
-      return const MainWidget(defaultColor: defaultColor);
-    } else { // APP IS RUN ON WEB (dynamic_color doesn't have web support)
-      context.read<LocalStates>().setColorScheme(
-          ColorScheme.fromSeed(seedColor: defaultColor, brightness: Brightness.dark)
+      final defaultLightColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.light,
       );
-      return const MainWidgetBase(primaryColorLight: defaultColor, primaryColorDark: defaultColor);
-    }
+      final defaultDarkColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.dark,
+      );
+
+      return MaterialApp(
+        title: 'Psalmboek',
+        home: HomeScreen(),
+
+        //APP THEME
+        theme: ThemeData(
+            colorScheme: lightColorScheme ?? defaultLightColorScheme,
+            fontFamily: settings.fontFamily,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: darkColorScheme ?? defaultDarkColorScheme,
+          brightness: Brightness.dark,
+          fontFamily: context.watch<SettingsData>().fontFamily
+        ),
+        themeMode: themeMode,
+
+        //TRANSLATIONS
+        supportedLocales: const [
+          Locale('nl', ''),
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+      );
+    });
   }
 }

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:psalmboek/providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+import 'home/home_wrapper.dart';
+
+class SettingsPage extends StatelessViewWidget {
+  SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
+
     return Scaffold(
-      backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
       appBar: AppBar(
-        backgroundColor: context.watch<LocalStates>().colorScheme!.surface,
         title: const Text('instellingen'),
       ),
       body: ListView(
@@ -71,7 +74,7 @@ class SettingsPage extends StatelessWidget {
                       onChanged: (value) {
                         context.read<SettingsData>().setTextSize(value.toInt());
                       }
-                      ),
+                    ),
                   ],
                 );
               }
@@ -80,9 +83,6 @@ class SettingsPage extends StatelessWidget {
           ),
           SwitchListTile(
             title: const Text('dynamische tekstgrootte'),
-            activeColor: context.watch<LocalStates>().colorScheme!.primary,
-            inactiveTrackColor: context.watch<LocalStates>().colorScheme!.shadow,
-            inactiveThumbColor: context.watch<LocalStates>().colorScheme!.inversePrimary,
             value: context.watch<SettingsData>().autoTextSize,
             onChanged: (value) {
               context.read<SettingsData>().setAutoTextSize(value);
@@ -106,15 +106,13 @@ class SettingsPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(0);
-                        context.read<LocalStates>().notifyLocalStatesListeners();
-                        },
+                      },
                       child: const Text('donker'),
                     ),
                     SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(1);
-                        context.read<LocalStates>().notifyLocalStatesListeners();
                       },
                       child: const Text('licht'),
                     ),
@@ -122,14 +120,12 @@ class SettingsPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         context.read<SettingsData>().setAppThemeMode(2);
-                        context.read<LocalStates>().notifyLocalStatesListeners();
                       },
                       child: const Text('systeem'),
                     ),
                   ],
                 );
-              }
-                  );
+              });
               },
           ) : const SizedBox(),
           ListTile(
@@ -145,7 +141,7 @@ class SettingsPage extends StatelessWidget {
                       onPressed: () {
                         context.read<SettingsData>().setFontFamily("Roboto");
                         Navigator.pop(context);
-                        },
+                      },
                       child: const Text("Roboto"),
                     ),
                     SimpleDialogOption(
@@ -157,9 +153,8 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ],
                 );
-              }
-                  );
-              },
+              });
+            },
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
@@ -174,7 +169,7 @@ class SettingsPage extends StatelessWidget {
                   actions: <Widget>[
                     SimpleDialogOption(
                       onPressed: () {
-                        context.read<SettingsData>().clearBookmarks();
+                        homeScreenViewModel.clearBookmarks();
                         Navigator.pop(context);
                       },
                       child: const Text('ja'),

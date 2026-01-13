@@ -1,17 +1,22 @@
+import 'package:psalmboek/screens/home/home_wrapper.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:psalmboek/providers.dart';
+import 'package:mvvm_plus/mvvm_plus.dart';
 
-class HomeScreenMobile extends StatelessWidget {
-  final AsyncSnapshot<dynamic> snapshot;
-  const HomeScreenMobile({super.key, required this.snapshot});
+class HomeScreenMobile extends ViewWidget<HomeScreenMobileViewModel> {
+  final Map<String, dynamic> bsonData;
+  HomeScreenMobile({super.key, required this.bsonData}) : super(
+    builder: () => HomeScreenMobileViewModel(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    int maxVerse = snapshot.data[snapshot.data["contents"][context.read<LocalStates>().dataVersionInputType]["id"]].length;
-    int value = (context.watch<CounterStates>().count > maxVerse) ? maxVerse : context.watch<CounterStates>().count;
+    final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
+
+    final colorScheme = Theme.of(context).colorScheme;
+    if (viewModel.count == null) viewModel.count = homeScreenViewModel.count;
+    int value = (viewModel.count! > homeScreenViewModel.maxVerse) ? homeScreenViewModel.maxVerse : viewModel.count!;
     const int spinnerDuration = 1300;
 
     return Center(
@@ -31,30 +36,31 @@ class HomeScreenMobile extends StatelessWidget {
                     ? MediaQuery.of(context).size.height*.4
                     : MediaQuery.of(context).size.width*.4,
                 customColors:  CustomSliderColors(
-                  trackColor: context.watch<LocalStates>().colorScheme!.secondary,
+                  trackColor: colorScheme.secondary,
                   progressBarColors: [
-                    context.watch<LocalStates>().colorScheme!.tertiary,
-                    context.watch<LocalStates>().colorScheme!.secondary,
-                    context.watch<LocalStates>().colorScheme!.primary,
-                    context.watch<LocalStates>().colorScheme!.onSurface
+                    colorScheme.tertiary,
+                    colorScheme.secondary,
+                    colorScheme.primary,
+                    colorScheme.onSurface
                   ],
-                  shadowColor: context.watch<LocalStates>().colorScheme!.outline,
+                  shadowColor: colorScheme.outline,
                 ),
               ),
               onChange: (double value) {
-                context.read<CounterStates>().setCounter(value.round().toInt());
+                viewModel.setCounter(value.round());
               },
               onChangeStart: (i) {
-                context.read<CounterStates>().setIsAnimatingText(true);
+                viewModel.setAnimatingText(true);
               },
               onChangeEnd: (i) {
-                context.read<CounterStates>().setIsAnimatingText(false);
+                viewModel.setAnimatingText(false);
+                homeScreenViewModel.setCounter(viewModel.count!.toInt());
               },
               min: 1,
-              max: maxVerse.toDouble(),
+              max: homeScreenViewModel.maxVerse.toDouble(),
               initialValue: value.toDouble(),
               innerWidget: (i) {
-                return context.watch<CounterStates>().isAnimatingText ?
+                return viewModel.isAnimatingText ?
                   AnimatedFlipCounter(
                     value: value,
                     fractionDigits: 0,
@@ -67,8 +73,9 @@ class HomeScreenMobile extends StatelessWidget {
                         textAlignVertical: TextAlignVertical.center,
                         onSubmitted: (String value) {
                           int valueInt = int.parse(value);
-                          if (valueInt <= maxVerse && valueInt > 0) {
-                            context.read<CounterStates>().setCounter(valueInt);
+                          if (valueInt <= homeScreenViewModel.maxVerse && valueInt > 0) {
+                            viewModel.setCounter(valueInt);
+                            homeScreenViewModel.setCounter(viewModel.count!);
                           }
                         },
                         keyboardType: TextInputType.number,
@@ -80,7 +87,7 @@ class HomeScreenMobile extends StatelessWidget {
                         ),
                         maxLength: 4,
                         maxLines: 1,
-                        controller: TextEditingController(text: context.watch<CounterStates>().count.toString()),
+                        controller: TextEditingController(text: homeScreenViewModel.count.toString()),
                         style: TextStyle(
                           fontFamily: Theme.of(context).textTheme.displayLarge!.fontFamily,
                           fontSize: Theme.of(context).textTheme.displayLarge!.fontSize,
@@ -102,23 +109,28 @@ class HomeScreenMobile extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    if (value > 1) context.read<CounterStates>().setCounter(value - 1);
+                    if (value > 1) {
+                      viewModel.setCounter(value - 1);
+                      homeScreenViewModel.setCounter(viewModel.count!);
+                    }
                   },
-                  style: OutlinedButton.styleFrom(backgroundColor: context.watch<LocalStates>().colorScheme!.primary),
+                  style: OutlinedButton.styleFrom(),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_back, size: 25, color: context.watch<LocalStates>().colorScheme!.onPrimary,),
+                    child: Icon(Icons.arrow_back, size: 25,),
                   ),
                 ),
                 const SizedBox(width: 20,),
                 ElevatedButton(
                   onPressed: () {
-                    if (value < maxVerse) context.read<CounterStates>().setCounter(value + 1);
+                    if (value < homeScreenViewModel.maxVerse) {
+                      viewModel.setCounter(value + 1);
+                      homeScreenViewModel.setCounter(viewModel.count!);
+                    }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: context.watch<LocalStates>().colorScheme!.primary),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_forward, size: 25, color: context.watch<LocalStates>().colorScheme!.onPrimary),
+                    child: Icon(Icons.arrow_forward, size: 25),
                   ),
                 ),
               ],
@@ -127,5 +139,19 @@ class HomeScreenMobile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class HomeScreenMobileViewModel extends ViewModel {
+  int? count; // local counter (for circular slider)
+  void setCounter(int value) {
+    count = value;
+    buildView();
+  }
+
+  bool isAnimatingText = false;
+  void setAnimatingText(bool value) {
+    isAnimatingText = value;
+    buildView();
   }
 }
