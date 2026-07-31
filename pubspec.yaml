@@ -39,14 +39,14 @@ dependencies:
   mvvm_plus: ^1.5.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  sleek_circular_slider: ^2.0.1
+  sleek_circular_slider: ^2.1.0
   animated_flip_counter: ^0.3.4
-  auto_size_text: ^3.0.0
+  flutter_auto_size_text: ^5.0.0
   card_loading: ^0.3.2
   flutter_slidable: ^4.0.3
   flutter_svg: ^2.3.0
   dynamic_color: ^1.8.1
-  bson: ^5.0.7
+  bson: ^5.0.8
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.4.0
   package_info_plus: ^10.2.1
