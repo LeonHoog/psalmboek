@@ -1,5 +1,6 @@
 plugins {
     id "com.android.application"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -17,17 +18,8 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
 android {
+    namespace 'io.leonhoog.psalmboek'
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -44,8 +36,8 @@ android {
         applicationId "io.leonhoog.psalmboek"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.compileSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode flutter.versionCode
+        versionName flutter.versionName
     }
 
     signingConfigs {
@@ -62,7 +54,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    namespace 'io.leonhoog.psalmboek'
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 kotlin {
