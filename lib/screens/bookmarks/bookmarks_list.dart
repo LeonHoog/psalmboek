@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +22,8 @@ class BookmarksList extends ViewWidget<BookmarksListViewModel> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final HomeScreenViewModel homeScreenViewModel = get<HomeScreenViewModel>();
     int itemCount = homeScreenViewModel.bookmarks.length;
 
@@ -75,6 +77,7 @@ class BookmarksList extends ViewWidget<BookmarksListViewModel> {
                         borderRadius: BorderRadius.circular(12),
                         icon: Icons.menu_book,
                         label: "Meer",
+                        backgroundColor: colorScheme.secondary,
                       ),
                       const Flexible(
                         flex: 1,
@@ -88,6 +91,7 @@ class BookmarksList extends ViewWidget<BookmarksListViewModel> {
                           removeBookmark(index);
                         },
                         borderRadius: BorderRadius.circular(12),
+                        backgroundColor: colorScheme.tertiary,
                         icon: Icons.delete,
                         label: 'Wis',
                       ),

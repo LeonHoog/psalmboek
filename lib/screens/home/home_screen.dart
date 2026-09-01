@@ -1,7 +1,7 @@
 import 'package:psalmboek/screens/home/home_wrapper.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mvvm_plus/mvvm_plus.dart';
 
 class HomeScreenMobile extends ViewWidget<HomeScreenMobileViewModel> {

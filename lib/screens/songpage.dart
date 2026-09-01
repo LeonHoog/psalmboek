@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mvvm_plus/mvvm_plus.dart';
 import 'package:provider/provider.dart';
 
